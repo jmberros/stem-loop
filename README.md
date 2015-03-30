@@ -48,7 +48,8 @@ reading direction.
 - `rnazWindow.pl --window=120 --slide=40 unknown.aln | RNAz --both-strands`
 - `| grep Prediction` to get a quick overview on the results.
 - `rnazSelectSeqs.pl -n 5 miRNA.maf | RNAz` to select an optimal subset of sequences.
-- ```shell
+- Long piping that works, for future reference:
+```shell
 rnazWindow.pl --min-seqs=4 input.maf | tee windows.maf | \
 RNAz --both-strands --no-shuffle -cutoff=0.5 | tee rnaz.out | \
 rnazCluster.pl --html > results.dat
