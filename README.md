@@ -1,7 +1,7 @@
 # Stem-loop
 Just a handy summary of some Bioinformatics tools I'm learning.
 
-<img src="http://cronodon.com/sitebuilder/images/Stem_loop-600x247.jpg">
+<img src="https://github.com/jmberros/stem-loop/blob/master/stem-loop.png">
 
 ## Infernal
 
