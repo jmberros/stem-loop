@@ -30,8 +30,7 @@ i. MFE depends on length and base composition of the sequence, it's difficult
 ii. RNAz predicts a consensus secondary structure for an alignment. The *consensus*
     MFE (E<sub>A</sub>) is compared to the average MFE (E) of the individual
     sequences in the alignment, to obtain a structure conservation index:
-
-    `SCI = E<sub>A</sub>/avg. E`
+    SCI = E<sub>A</sub> / E
 
     SCI will be high if the sequences fold togther 'equally well as if folded
     individually'. Low SCI means no consensus fold can be found.
@@ -43,9 +42,7 @@ SVM to classify an alignment of sequences as either [Structural] "RNA" or "OTHER
 ### Cheatsheet
 
 - RNAz takes a multiple sequence alignment as input: Clustal W or MAF formats.
-- ```shell
-RNAz tRNA.maf
-```
+- In its most basic form, it would be run as `RNAz tRNA.maf` to score an alignment.
 - Use `--forward`, `--reverse`, and `--both-strands` to explicitely specify
 reading direction.
 - `rnazWindow.pl --window=120 --slide=40 unknown.aln | RNAz --both-strands`
@@ -57,7 +54,7 @@ RNAz --both-strands --no-shuffle -cutoff=0.5 | tee rnaz.out | \
 rnazCluster.pl --html > results.dat
 ```
 - `rnazCluster.pl --html results.dat > results/results.html` to generate an
-index.html file.
+`index.html` file.
 - `rnazFilter.pl "P>0.9" results.dat` will list windows with a P-value higher than 0.9.
 
 ### Links
