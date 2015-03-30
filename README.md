@@ -3,7 +3,32 @@ Just a handy summary of some Bioinformatics tools I'm learning.
 
 <img src="https://github.com/jmberros/stem-loop/blob/master/stem-loop.png">
 
+## General remarks
+- You can add the following lines to your `~/.zshrc` for practicality:
+
+  ```
+  # Some bio utils from different suites
+  export PATH=/home/juan/bio/ViennaRNA-2.1.9/Utils:$PATH
+  export PATH=/home/juan/bio/RNAz-2.1/perl:$PATH
+  export PATH=/home/juan/bio/ncbi-blast-2.2.30+/bin:$PATH
+  ```
+
+  Of course, you should replace `/home/juan/bio` with the correct path for you.
+
 ## Infernal
+
+`Aligned sequences => Covariance Model ( + Genome ) => Sequence prediction`
+
+### Explanation
+
+### Cheatsheet
+
+### Links
+- Source: check the link under 'Download' http://infernal.janelia.org/
+- User's Guide: http://selab.janelia.org/software/infernal/Userguide.pdf
+- Rfam database: http://rfam.xfam.org/
+
+### Explanation
 
 ## RNAz
 
@@ -68,6 +93,24 @@ rnazCluster.pl --html > results.dat
 ## ViennaRNA
 
 ## NCBI BLAST
+
+I'm following this tutorial: http://www.ncbi.nlm.nih.gov/books/NBK52640/
+
+Just download the source tar, extract (`tar xvzf <filename>`, you're welcome),
+and copy this line to your `~/.zshrc`, `~/.bashrc` or whatever your shell config
+file might be (remember to replace /home/juan/bio, unless you're myself, in which
+case: 'Remember to feed Tito you asshole!'):
+
+```shell
+export PATH=/home/juan/bio/ncbi-blast-2.2.30+/bin:$PATH
+export BLASTDB=”/home/juan/bio/ncbi-blast-2.2.30+/db”
+```
+
+Create a db directory with `mkdir ./ncbi-blast-2.2.29+/db`
+`cd` into that directory and `ftp ftp.ncbi.nlm.nih.gov`, using `anonymous` as
+username and your mail as password. You should be granted access.
+
+### Links
 
 - Source: ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/
 - Docs: http://www.ncbi.nlm.nih.gov/books/NBK52640/
