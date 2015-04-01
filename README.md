@@ -19,9 +19,105 @@ Just a handy summary of some Bioinformatics tools I'm learning.
 
 `Aligned sequences => Covariance Model ( + Genome ) => Sequence prediction`
 
-### Explanation
+### Explanation and Commands
 
-### Cheatsheet
+#### Build and calibrate a Covariance Model based on a multi alignment of RNAs
+Infernal starts with a multiple sequence alignment file in Stockholm format, which
+must include consensus secondary structure annotation.
+
+```
+# tRNA5.sto
+
+tRNA1             GCGGAUUUAGCUCAGUUGGG.AGAGCGCCAGACUGAAGAUCUGGAGGUCC
+tRNA2             UCCGAUAUAGUGUAAC.GGCUAUCACAUCACGCUUUCACCGUGGAGA.CC
+tRNA3             UCCGUGAUAGUUUAAU.GGUCAGAAUGGGCGCUUGUCGCGUGCCAGA.UC
+tRNA4             GCUCGUAUGGCGCAGU.GGU.AGCGCAGCAGAUUGCAAAUCUGUUGGUCC
+tRNA5             GGGCACAUGGCGCAGUUGGU.AGCGCGCUUCCCUUGCAAGGAAGAGGUCA
+#=GC SS_cons      <<<<<<<..<<<<.........>>>>.<<<<<.......>>>>>.....<
+
+tRNA1             UGUGUUCGAUCCACAGAAUUCGCA
+tRNA2             GGGGUUCGACUCCCCGUAUCGGAG
+tRNA3             GGGGUUCAAUUCCCCGUCGCGGAG
+tRNA4             UUAGUUCGAUCCUGAGUGCGAGCU
+tRNA5             UCGGUUCGAUUCCGGUUGCGUCCA
+#=GC SS_cons      <<<<.......>>>>>>>>>>>>.
+//
+```
+The `cmbuild` command builds a covariance model (CM) from the input alignment:
+```shell
+$ cmbuild tRNA5.cm ./tRNA5.sto
+```
+The CM needs to be "calibrated" prior o making database searches with it.
+In the calibration, statistical parameteres necessasry for reporting E-values
+(expectation values) are estimated and stored in the CM file. This depends on the
+generation of random sequences and hence it takes some time.
+
+The `--forecast` flag is optional and it will get you an estimate of the running time.
+```shell
+$ cmcalibrate [ --forecast ] tRNA.cm
+```
+There are calibrated models (I think) in the [Rfam database online](http://rfam.xfam.org/)
+ready to download and use, so you sometimes might save the CM building time.
+
+#### Use the CM to search for RNA homologs in a sequence/genome
+Once you have the CM file, you can search for RNA homologs to your model in a
+database. The database can be in FASTA format. For instance:
+```shell
+$ cmsearch tRNA5.cm escherichia-coli.fa # Search tRNA5 in E. coli's genome
+```
+You'll obtain a hits table, where the hits marked as (!) are inclussions.
+Read [the manual](http://selab.janelia.org/software/infernal/Userguide.pdf)
+for an explanation on how to read this information-rich output.
+
+The sequences go through a multi-stage filter pipeline of four scoring algorithms
+(SSV, Viterbi, Forward, CYK). Then, two more stages apply the CM to score both
+the sequence and structure of each possible hit.
+
+#### Survey a metagenome or sequence for the RNAs in a CM database
+
+The `cmscan` program takes a single query sequence and a CM database as inputs.
+The CM database might be Rfam. The command is designed for sequence datasets
+from RNA-Seq experiments or metagenomics surveys, for which one wants to know
+*what families of RNAs are represented in the sequence dataset*.
+
+You first ought to create a CM database flatfile, which simply is a concatenation
+of individual CM files:
+```shell
+$ cat tRNA5.cm 5S_rRNA.cm > database.cm
+```
+Compress and index the flatfile:
+```shell
+$ cmpress database.cm
+```
+And then you can search the CM database
+```shell
+$ cmscan database.cm metagenome.fa
+```
+The search space of `cmscan` and `cmsearch` differ, so the E-values you'll get
+for each hit will probably differ too. Refer to the manual for an explanation.
+
+#### Multiple alignments
+The program `cmalign` aligns sequences to a RNA model.
+```
+$ cmalign tRNA5.cm tRNAs-found-in-genome.fa
+```
+#### RNAs with unknown secondary structure
+Some functional RNA (like snoRNAs) do not conserve a secondary structure, so it's
+more appropriate to model such families with a profile HMM rather than a CM.
+Infernal automatically fallbacks to profile HMM algorithms in `cmsearch` and
+`cmscan` if a model has zero basepairs.
+
+If a multiple alignment to be used as inputs lacks secondary structure annotation,
+then you can build the RNA model with the `--noss` flag:
+```shell
+$ cmbuild --noss tRNA-noss.cm tRNA5.sto
+```
+Zero basepair models don't need no calibration, yo, so use them directly in a
+cmsearch / cmscan.
+
+If the secondary structure of multiple RNA homologs is just unknown, you can use
+`RNAalifold` or `WAR` to try to predict it.
+
 
 ### Links
 - Source: check the link under 'Download' http://infernal.janelia.org/
