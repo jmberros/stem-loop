@@ -17,7 +17,7 @@ Just a handy summary of some Bioinformatics tools I'm learning.
 
 ## Infernal
 
-`Aligned sequences => Covariance Model ( + Genome ) => Sequence prediction`
+`Aligned sequences => Covariance Model ( + Genome ) => Find/Predict that sequence`
 
 ### Explanation and Commands
 
