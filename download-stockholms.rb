@@ -5,8 +5,6 @@ require 'fileutils'
 require 'colorize'
 
 class Rfam
-  attr_accessor :accessions
-
   def download_stockholms(accessions=nil)
     FileUtils.mkdir target_dir unless File.exists? target_dir
     Dir.chdir target_dir
