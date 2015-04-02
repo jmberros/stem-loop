@@ -33,10 +33,6 @@ class Rfam
   end
 end
 
-def debug(message)
-  p message if ENV["DEBUG"]
-end
-
 def happy_cat(message)
   "\n 😸 --( #{message} )"
 end
