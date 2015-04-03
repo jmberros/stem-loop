@@ -9,7 +9,7 @@ def cmbuild(stockholm_filename)
   puts "\n Build Covariance Model for '#{stockholm_filename}'"
   `cmbuild -F #{name}.cm #{name}.sto` # | tee #{name}.cm.log`
 
-  puts " ↪ #{name}.cm".green.bold + \
+  puts " ↪ #{name}.cm".green.bold
        #"\n ( There's a log of the process in #{name}.cm.log )"
 
   forecast_calibration "#{name}.cm"
