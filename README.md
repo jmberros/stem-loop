@@ -7,8 +7,18 @@ An ever-growing collection of ruby scripts to deal with RNAs.
 
 For starters, clone this repo, copy the scripts to a user-specific directory like `~/bin` and add that directory to your $PATH.
 
-### Downloading Stockholm files from Rfam
+### Download Stockholm files from Rfam
 ```shell
-$ download-stockholms.rb ACCESSION_CODE_1 ACCESSION_CODE_2 ACCESSION_CODE_3
+$ download-stockholms.rb <accession-code-1> [ <accession-code-2>, ... ]
 ```
 This script will create a sub-directory named `stockholms/` in the current directory. Then it will procede to download the files there. It will also scan the Stockholm file for a `#GF ID` code, in order to give the file a meaningful name.
+
+### Build covariance models from Stockholm files
+```shell
+$ cmbuild.rb <stockholm-filename>
+```
+This script is meant to ease the process of building and forecasting the calibration of many stockholm files in a single piped command. Given a directory full of stockholm files, you might do this:
+```shell
+$ for i in $( ls *.sto ); do cmbuild.rb $i; done
+```
+You will get covariance models and forecast times for their calibration.
