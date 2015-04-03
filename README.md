@@ -17,8 +17,8 @@ This script will create a sub-directory named `stockholms/` in the current direc
 ```shell
 $ cmbuild.rb <stockholm-filename>
 ```
-This script is meant to ease the process of building and forecasting the calibration of many stockholm files in a single piped command. Given a directory full of stockholm files, you might do this:
+This script is meant to ease the process of building and forecasting the calibration of many stockholm files in a single command. Given a directory full of stockholm files, you might do this:
 ```shell
-$ for i in $( ls *.sto ); do cmbuild.rb $i; done
+$ cmbuild.rb $( ls *.sto )
 ```
-You will get covariance models and forecast times for their calibration.
+You will get covariance models and calibration estimated times for each file.

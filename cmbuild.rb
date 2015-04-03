@@ -24,7 +24,7 @@ def forecast_calibration(cm_filename)
 end
 
 if __FILE__ == $0
-  abort(" 😸 Feed me one -just one- input stockholm filename") unless ARGV.count == 1
+  abort(" 😸 Feed me one or more stockholm filenames") if ARGV.empty?
 
-  cmbuild ARGV.first
+  ARGV.each { |stockholm| cmbuild stockholm }
 end
