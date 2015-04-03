@@ -15,9 +15,16 @@ class Infernal
     forecast_calibration "#{covariance_model}"
     `cmcalibrate --cpu 6 #{covariance_model}`  
 
-    t1 = Time.now
-    elapsed = distance_of_time_in_words(t0, t1)
-    puts " ↪ Finished at #{t1.strftime("%H:%M")} (elapsed time: #{elapsed})".green
+    successful_calibration = !`cat #{covariance_model} | grep "ECM"`.empty?
+    if successful_calibration
+      new_filename = covariance_model.gsub(".cm", ".c.cm")
+      FileUtils.mv "#{covariance_model}", new_filename
+      t1 = Time.now
+      elapsed = distance_of_time_in_words(t0, t1)
+      puts " ↪ #{new_filename} (completed in #{elapsed})".green
+    else
+      puts " ↪ It seems the calibration was unsuccessful. Check the file.".red
+    end
   end
 
   def forecast_calibration(covariance_model)
@@ -29,11 +36,6 @@ class Infernal
 end
 
 if __FILE__ == $0
-  infernal = Infernal.new
-
-  # Read arguments from the command line
-  ARGV.each { |covariance_model| infernal.calibrate covariance_model }
-
-  # Feed from standard input
-  while covariance_model = gets do infernal.calibrate covariance_model.chomp end
+  input = ARGV.empty? ? ARGF.readlines.map(&:chomp) : ARGV
+  input.each { |covariance_model| Infernal.new.calibrate covariance_model }
 end

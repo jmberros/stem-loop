@@ -6,7 +6,7 @@ require 'colorize'
 
 class Rfam
   def download_stockholm(accession)
-    puts "\n Download the Multiple Sequence Alignment with accession code #{accession}"
+    puts "\n 🌐 Download the Multiple Sequence Alignment with accession code #{accession}"
     `curl --silent -o #{accession}.sto #{url(accession)}`
     id = `cat #{accession}.sto | grep "#=GF ID" | awk '{ print $NF }'`.chomp
     filename = "#{id}.#{accession}.sto"
@@ -23,11 +23,6 @@ class Rfam
 end
 
 if __FILE__ == $0
-  rfam = Rfam.new
-
-  # Read arguments from the command line
-  ARGV.each { |accession| rfam.download_stockholm accession }
-
-  # Feed from standard input
-  while accession = gets do rfam.download_stockholm accession.chomp end
+  input = ARGV.empty? ? ARGF.readlines.map(&:chomp) : ARGV
+  input.each { |accession| Rfam.new.download_stockholm accession }
 end

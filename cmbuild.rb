@@ -7,7 +7,7 @@ class Infernal
   def cmbuild(stockholm_filename)
     name = stockholm_filename.gsub ".sto", ""
 
-    puts "\n Build a Covariance Model for the MSA in '#{stockholm_filename}'"
+    puts "\n ⚒ Build a Covariance Model for the MSA in '#{stockholm_filename}'"
     `cmbuild -F #{name}.cm #{name}.sto` # | tee #{name}.cm.log`
 
     puts " ↪ #{name}.cm".green.bold
@@ -16,11 +16,6 @@ class Infernal
 end
 
 if __FILE__ == $0
-  infernal = Infernal.new
-
-  # Read arguments from the command line
-  ARGV.each { |stockholm| infernal.cmbuild stockholm }
-
-  # Feed from standard input
-  while stockholm = gets do infernal.cmbuild stockholm.chomp end
+  input = ARGV.empty? ? ARGF.readlines.map(&:chomp) : ARGV
+  input.each { |stockholm| Infernal.new.cmbuild stockholm }
 end

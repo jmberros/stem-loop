@@ -38,3 +38,13 @@ This script is meant to ease the process of building and forecasting the calibra
 $ cmbuild.rb $( ls *.sto )
 ```
 You will get covariance models and calibration estimated times for each file.
+
+### Calibrate the covariance models
+```shell
+$ cmcalibrate.rb $( ls *.cm )
+```
+Or:
+```shell
+$ ls *.cm | cmcalibrate.rb
+```
+This process is time and CPU consuming. You should probably run it in a screen or tmux session.
