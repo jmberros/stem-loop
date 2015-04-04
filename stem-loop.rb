@@ -4,11 +4,18 @@
 require 'rubygems'
 require 'bundler/setup'
 
-Bundler.require(:default)
+#Bundler.require(:default)
+require 'colorize'
+require 'action_view'
+require 'mustache'
+require 'pry-debugger'
+# ^ This workaround sucks
 
 require 'fileutils' # Necessary?
 
 include ActionView::Helpers::DateHelper
+
+APP_ROOT = File.dirname  __FILE__
 
 require_relative './lib/infernal'
 require_relative './lib/rfam'

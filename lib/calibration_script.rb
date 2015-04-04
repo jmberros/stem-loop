@@ -1,7 +1,7 @@
 class CalibrationScript
   def write_script(covariance_model)
     abort(" ⚠ File #{covariance_model} doesn't exist") unless File.exist? covariance_model
-    puts " ✎ Generate PBS job script to calibrate #{covariance_model}"
+    puts "\n ✎ Generate PBS job script to calibrate #{covariance_model}"
 
     options = default_options.merge({
       job_name: "calibrate__#{File.basename(covariance_model)}",
@@ -20,7 +20,7 @@ class CalibrationScript
   private
 
   def template_path
-    "./templates/calibration-job.mustache"
+    "#{APP_ROOT}/templates/calibration-job.mustache"
   end
 
   def default_options
