@@ -6,14 +6,14 @@ require 'bundler/setup'
 
 #Bundler.require(:default)
 require 'colorize'
-require 'action_view'
 require 'mustache'
 require 'pry-debugger'
 # ^ This workaround sucks
 
 require 'fileutils' # Necessary?
 
-include ActionView::Helpers::DateHelper
+#require 'action_view' # FUCK Nokogiri
+#include ActionView::Helpers::DateHelper
 
 APP_ROOT = File.dirname  __FILE__
 

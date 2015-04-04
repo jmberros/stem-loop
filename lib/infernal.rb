@@ -24,7 +24,8 @@ class Infernal
         new_filename = covariance_model.gsub(".cm", ".c.cm")
         FileUtils.mv "#{covariance_model}", new_filename
         t1 = Time.now
-        elapsed = distance_of_time_in_words(t0, t1)
+        #elapsed = distance_of_time_in_words(t0, t1)
+        elapsed = t1 - t0 # TODO: Make seconds human-readable
         puts " ↪ #{new_filename} (completed in #{elapsed})".green
       else
         puts " ↪ It seems the calibration was unsuccessful. Check the file.".red
