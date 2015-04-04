@@ -1,9 +1,10 @@
 class CalibrationScript
   def write_script(covariance_model)
+    abort(" ⚠ File #{covariance_model} doesn't exist") unless File.exist? covariance_model
     puts " ✎ Generate PBS job script to calibrate #{covariance_model}"
 
     options = default_options.merge({
-      job_name: "#{File.basename(covariance_model)}_calibration",
+      job_name: "calibrate__#{File.basename(covariance_model)}",
       covariance_model: covariance_model,
       new_filename: covariance_model.gsub(".cm", ".c.cm")
     })
