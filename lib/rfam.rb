@@ -1,10 +1,17 @@
 class Rfam
   def download_stockholm(accession)
+    filename = "#{accession}.sto"
     puts "\n 🌐 Download the Multiple Sequence Alignment with accession code #{accession}"
-    `curl --silent -o #{accession}.sto #{url(accession)}`
-    id = `cat #{accession}.sto | grep "#=GF ID" | awk '{ print $NF }'`.chomp
-    filename = "#{id}.#{accession}.sto"
-    FileUtils.mv "#{accession}.sto", filename
+    `curl --silent -o #{filename} #{url(accession)}`
+
+    # Scan for a sequence ID to give a more meaningful name to the file
+    id = `cat #{filename} | grep "#=GF ID" | awk '{ print $NF }'`.chomp
+    unless id.empty?
+      original_filename = filename
+      filename = "#{id}." + filename
+      `mv "#{original_filename}" #{filename}`
+    end
+
     puts " ↪ #{filename}".green.bold
   end
 
