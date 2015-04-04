@@ -10,5 +10,6 @@ require 'fileutils' # Necessary?
 
 include ActionView::Helpers::DateHelper
 
-require './lib/infernal'
-require './lib/rfam'
+require_relative './lib/infernal'
+require_relative './lib/rfam'
+require_relative './lib/calibration_script'
