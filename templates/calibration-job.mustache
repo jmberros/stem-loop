@@ -1,8 +1,8 @@
-# Jobname
-PBS -N {{{ job_name }}}
+# Job name
+PBS -N "{{{ job_name }}}"
 
-# Queuename
-PBS -q {{{ queue_name }}}
+# Queue name
+PBS -q "{{{ queue_name }}}"
 
 # Nodes (nodes) and cores per node (ppn)
 PBS -l nodes={{{ nodes }}}:ppn={{{ cores }}}
@@ -15,7 +15,7 @@ PBS -V
 PBS -m abe
 
 # Recipient for the emails:
-PBS -M {{{ mail }}}
+PBS -M "{{{ mail }}}"
 {{/mail}}
 {{#output_filename}}
 
@@ -31,7 +31,7 @@ PBS -o {{{ error_filename }}}
 cd $PBS_O_WORKDIR
 
 # Commands to run ( a.k.a The Job )
-{{#commands}}
-{{{ command }}}
-{{/commands}}
+
+cmcalibrate --cpu 1 {{{ covariance_model }}}
+if grep --quiet "ECM" {{{ covariance_model }}}; then mv {{{ new_filename }}}; fi
 
