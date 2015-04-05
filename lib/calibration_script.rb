@@ -4,6 +4,7 @@ class CalibrationScript
     puts "\n ✎ Generate PBS job script to calibrate #{covariance_model}"
 
     options = default_options.merge({
+      cmcalibrate_path: `which cmcalibrate`.chomp,
       job_name: "calibrate__#{File.basename(covariance_model)}",
       covariance_model: covariance_model,
       new_filename: covariance_model.gsub(".cm", ".c.cm")
