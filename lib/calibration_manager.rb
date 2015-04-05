@@ -27,8 +27,10 @@ class CalibrationManager
     server_response = `qsub #{job_filename}`.chomp
     $logger.debug " ↪ #{server_response}"
 
-    predicted_time = Infernal.new.forecast_calibration(covariance_model, 1)
-    $logger.debug " ⌚ Expected calibration of #{predicted_time} (h:m:s) with #{cores} core(s)"
+    if $stdout.tty?
+      predicted_time = Infernal.new.forecast_calibration(covariance_model, 1)
+      $logger.debug " ⌚ Expected calibration of #{predicted_time} (h:m:s) with #{cores} core(s)"
+    end
 
     server_response
   end
