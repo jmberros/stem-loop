@@ -1,11 +1,12 @@
 class Infernal
   def cmbuild(stockholm_filename)
-    name = stockholm_filename.gsub ".sto", ""
+    cm_filename = stockholm_filename.gsub ".sto", ".cm"
 
     puts "\n ⚒ Build a Covariance Model for the MSA in '#{stockholm_filename}'"
-    `cmbuild -F #{name}.cm #{name}.sto`
+    `cmbuild -F #{cm_filename} #{stockholm_filename}`
 
-    puts " ↪ #{name}.cm".green.bold
+    puts " ✔ #{cm_filename}".green.bold
+    cm_filename
   end
 
   def calibrate(covariance_model, run=true)
@@ -26,9 +27,10 @@ class Infernal
         t1 = Time.now
         #elapsed = distance_of_time_in_words(t0, t1)
         elapsed = t1 - t0 # TODO: Make seconds human-readable
-        puts " ↪ #{new_filename} (completed in #{elapsed})".green
+        puts " ✔ [ok] #{new_filename} (completed in #{elapsed})".green
+        new_filename
       else
-        puts " ↪ It seems the calibration was unsuccessful. Check the file.".red
+        puts " ☹ [fail] It seems the calibration was unsuccessful. Check the file.".red
       end
     else
       command

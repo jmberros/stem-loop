@@ -1,5 +1,5 @@
 class CalibrationScript
-  def write_script(covariance_model)
+  def write_script(covariance_model, run=false)
     abort(" ⚠ File #{covariance_model} doesn't exist") unless File.exist? covariance_model
     puts "\n ✎ Generate PBS job script to calibrate #{covariance_model}"
 
@@ -15,7 +15,14 @@ class CalibrationScript
       file.puts Mustache.render( File.read(template_path), options )
     end
 
-    puts " ↪ #{job_script_filename}".green.bold
+    puts " ✔ #{job_script_filename}".green.bold
+    run ? enqueue(job_script_filename) : job_script_filename
+  end
+
+  def enqueue(job_script_filename)
+    puts "\n ⌛ Enqueue the calibration job"
+    server_response = `qsub #{job_script_filename}`.chomp
+    puts " ↪ #{server_response}".blue.bold
   end
 
   private

@@ -1,14 +1,14 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-require 'rubygems'
-require 'bundler/setup'
-
+#require 'rubygems'
+#require 'bundler/setup'
 #Bundler.require(:default)
+
 require 'colorize'
 require 'mustache'
 require 'pry-debugger'
-# ^ This workaround sucks
+# ^ This workaround sucks, I should be using the Gemfile
 
 require 'fileutils' # Necessary?
 
@@ -20,3 +20,4 @@ APP_ROOT = File.dirname  __FILE__
 require_relative './lib/infernal'
 require_relative './lib/rfam'
 require_relative './lib/calibration_script'
+require_relative './lib/stem_loop'

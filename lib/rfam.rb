@@ -12,7 +12,8 @@ class Rfam
       `mv "#{original_filename}" #{filename}`
     end
 
-    puts " ↪ #{filename}".green.bold
+    puts " ✔ #{filename}".green.bold
+    filename
   end
 
   private
