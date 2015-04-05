@@ -2,46 +2,43 @@ class Infernal
   def cmbuild(stockholm_filename)
     cm_filename = stockholm_filename.gsub ".sto", ".cm"
 
-    puts "\n ⚒ Build a Covariance Model for the MSA in '#{stockholm_filename}'"
+    $logger.debug "\n ⚒ Build a Covariance Model for the MSA in '#{stockholm_filename}'"
     `cmbuild -F #{cm_filename} #{stockholm_filename}`
 
-    puts " ✔ #{cm_filename}".green.bold
+    $logger.debug " ✔ #{cm_filename}".green.bold
     cm_filename
   end
 
-  def calibrate(covariance_model, cores=1, run=true)
-    puts "\n Calibrate the Covariance Model in '#{covariance_model}'"
+  def calibrate(covariance_model, cores=1)
+    $logger.debug "\n Calibrate the Covariance Model in '#{covariance_model}'"
 
-    forecast_calibration "#{covariance_model}"
-    command = "cmcalibrate --cpu #{cores} #{covariance_model}"  
+    predicted_time = forecast_calibration covariance_model, cores
+    $logger.debug " ⌚ Expected calibration of #{predicted_time} (h:m:s) with #{cores} core(s)"
 
-    if run
-      t0 = Time.now
-      puts " ⚖ Begin calibration at #{t0.strftime("%H:%M")}".yellow
-      `#{command}`
-      successful_calibration = !`cat #{covariance_model} | grep "ECM"`.empty?
+    t0 = Time.now
+    $logger.debug " ⚖ Begin calibration at #{t0.strftime("%H:%M")}".yellow
+    `cmcalibrate --cpu #{cores} #{covariance_model}` # This takes some time
 
-      if successful_calibration
-        new_filename = covariance_model.gsub(".cm", ".c.cm")
-        FileUtils.mv "#{covariance_model}", new_filename
-        t1 = Time.now
-        #elapsed = distance_of_time_in_words(t0, t1)
-        elapsed = t1 - t0 # TODO: Make seconds human-readable
-        puts " ✔ [ok] #{new_filename} (completed in #{elapsed})".green
-        new_filename
-      else
-        puts " ☹ [fail] It seems the calibration was unsuccessful. Check the file.".red
-      end
+    successful_calibration = !`cat #{covariance_model} | grep "ECM"`.empty?
+
+    if successful_calibration
+      new_filename = covariance_model.gsub(".cm", ".c.cm")
+      FileUtils.mv "#{covariance_model}", new_filename
+      t1 = Time.now
+      #elapsed = distance_of_time_in_words(t0, t1)
+      elapsed = t1 - t0 # TODO: Make seconds human-readable
+      $logger.debug " ✔ #{new_filename} (completed in #{elapsed})".green
+      new_filename
     else
-      command
+      $logger.debug " ☹ [fail] It seems the calibration was unsuccessful.".red
     end
   end
 
   def forecast_calibration(covariance_model, cores=1)
-    command = "cmcalibrate --nforecast #{cores} --forecast #{covariance_model} | "\
-              "grep -v '^#' | grep -v 'ok' | awk '{ print $2 }'"
-    predicted_time = `#{command}`.chomp
-    puts " ⌚ Expected duration of #{predicted_time} (hh:mm:ss) with #{cores} core(s)"
+    command = \
+      "cmcalibrate --nforecast #{cores} --forecast #{covariance_model} | "\
+      "grep -v '^#' | grep -v 'ok' | awk '{ print $2 }'"
+    `#{command}`.chomp
   end
 end
 

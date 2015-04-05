@@ -9,6 +9,7 @@ require 'colorize'
 require 'mustache'
 require 'pry-debugger'
 # ^ This workaround sucks, I should be using the Gemfile
+require 'optparse'
 
 require 'fileutils' # Necessary?
 
@@ -17,7 +18,9 @@ require 'fileutils' # Necessary?
 
 APP_ROOT = File.dirname  __FILE__
 
+require_relative './lib/logger'
+$logger = Logger.new
+
 require_relative './lib/infernal'
 require_relative './lib/rfam'
-require_relative './lib/calibration_script'
-require_relative './lib/stem_loop'
+require_relative './lib/calibration_manager'
