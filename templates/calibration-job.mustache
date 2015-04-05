@@ -33,5 +33,5 @@ cd $PBS_O_WORKDIR
 # Commands to run ( a.k.a The Job )
 
 {{{ cmcalibrate_path }}} --cpu {{{ cores }}} {{{ covariance_model }}}
-if grep --quiet "ECM" {{{ covariance_model }}}; then mv {{{ new_filename }}}; fi
+if grep --quiet "ECM" {{{ covariance_model }}}; then mv {{{ covariance_model }}} {{{ new_filename }}}; fi
 
