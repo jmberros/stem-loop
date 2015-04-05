@@ -25,13 +25,13 @@ PBS -o {{{ output_filename }}}
 {{#error_filename}}
 
 # Error filename:
-PBS -o {{{ error_filename }}}
+PBS -e {{{ error_filename }}}
 {{/error_filename}}
 
 cd $PBS_O_WORKDIR
 
 # Commands to run ( a.k.a The Job )
 
-{{{ cmcalibrate_path }}} --cpu 1 {{{ covariance_model }}}
+{{{ cmcalibrate_path }}} --cpu {{{ cores }}} {{{ covariance_model }}}
 if grep --quiet "ECM" {{{ covariance_model }}}; then mv {{{ new_filename }}}; fi
 

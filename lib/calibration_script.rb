@@ -3,20 +3,26 @@ class CalibrationScript
     abort(" ⚠ File #{covariance_model} doesn't exist") unless File.exist? covariance_model
     puts "\n ✎ Generate PBS job script to calibrate #{covariance_model}"
 
+    job_script_filename = covariance_model.gsub(".cm", ".cm.calibrate.job")
     options = default_options.merge({
       cmcalibrate_path: `which cmcalibrate`.chomp,
+      cores: 1, # TODO: Configurable
       job_name: "calibrate__#{File.basename(covariance_model)}",
       covariance_model: covariance_model,
-      new_filename: covariance_model.gsub(".cm", ".c.cm")
+      output_filename: "#{job_script_filename}.output",
+      error_filename: "#{job_script_filename}.errors",
+      new_filename: covariance_model.gsub(".cm", ".c.cm"),
     })
 
-    job_script_filename = covariance_model.gsub(".cm", ".cm.calibrate.job")
     File.open(job_script_filename, "w+") do |file|
       file.puts Mustache.render( File.read(template_path), options )
     end
 
     puts " ✔ #{job_script_filename}".green.bold
-    run ? enqueue(job_script_filename) : job_script_filename
+
+    enqueue(job_script_filename) if run
+    Infernal.new.forecast_calibration(covariance_model, 1)
+    job_script_filename
   end
 
   def enqueue(job_script_filename)

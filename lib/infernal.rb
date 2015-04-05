@@ -9,15 +9,15 @@ class Infernal
     cm_filename
   end
 
-  def calibrate(covariance_model, run=true)
+  def calibrate(covariance_model, cores=1, run=true)
     puts "\n Calibrate the Covariance Model in '#{covariance_model}'"
 
     forecast_calibration "#{covariance_model}"
-    command = "cmcalibrate --cpu 6 #{covariance_model}"  
+    command = "cmcalibrate --cpu #{cores} #{covariance_model}"  
 
     if run
       t0 = Time.now
-      puts " ⚒ Begin calibration at #{t0.strftime("%H:%M")}".yellow
+      puts " ⚖ Begin calibration at #{t0.strftime("%H:%M")}".yellow
       `#{command}`
       successful_calibration = !`cat #{covariance_model} | grep "ECM"`.empty?
 
@@ -37,11 +37,11 @@ class Infernal
     end
   end
 
-  def forecast_calibration(covariance_model)
-    command = "cmcalibrate --nforecast 6 --forecast #{covariance_model} | "\
+  def forecast_calibration(covariance_model, cores=1)
+    command = "cmcalibrate --nforecast #{cores} --forecast #{covariance_model} | "\
               "grep -v '^#' | grep -v 'ok' | awk '{ print $2 }'"
     predicted_time = `#{command}`.chomp
-    puts " ⌚ Expected duration of ~#{predicted_time} (hh:mm:ss)"
+    puts " ⌚ Expected duration of #{predicted_time} (hh:mm:ss) with #{cores} core(s)"
   end
 end
 
