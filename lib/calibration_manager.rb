@@ -23,6 +23,7 @@ class CalibrationManager
   end
 
   def enqueue_job(job_filename)
+    abort(" ⚠ File #{job_filename} doesn't exist") unless File.exist? job_filename
     $logger.debug "\n ⌛ Enqueue the calibration job"
     server_response = `qsub #{job_filename}`.chomp
     $logger.debug " ↪ #{server_response}"
