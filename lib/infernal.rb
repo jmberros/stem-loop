@@ -26,8 +26,7 @@ class Infernal
       new_filename = covariance_model.gsub(".cm", ".c.cm")
       FileUtils.mv "#{covariance_model}", new_filename
       t1 = Time.now
-      #elapsed = distance_of_time_in_words(t0, t1)
-      elapsed = t1 - t0 # TODO: Make seconds human-readable
+      elapsed = $utils.time_in_words(t1 - t0)
       $logger.debug " ✔ #{new_filename} (completed in #{elapsed})".green
       new_filename
     else

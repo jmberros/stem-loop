@@ -21,6 +21,10 @@ APP_ROOT = File.dirname  __FILE__
 require_relative './lib/logger'
 $logger = Logger.new
 
+require_relative './lib/utils'
+$utils = Utils.new
+
 require_relative './lib/infernal'
 require_relative './lib/rfam'
 require_relative './lib/calibration_manager'
+require_relative './lib/utils'
