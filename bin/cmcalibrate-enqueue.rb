@@ -18,10 +18,10 @@ if __FILE__ == $0
     end
   end.parse!
 
-  input = ARGV.empty? ? ARGF.readlines.map(&:chomp) : ARGV
   calibration_manager = CalibrationManager.new
 
-  input.each do |covariance_model|
+  ARGF.each_line do |line|
+    covariance_model = line.chomp
     job_filename = calibration_manager.write_script covariance_model, options[:cpu]
     server_response = calibration_manager.enqueue_job job_filename
 

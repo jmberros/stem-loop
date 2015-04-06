@@ -4,10 +4,9 @@
 require_relative '../stem-loop'
 
 if __FILE__ == $0
-  input = ARGV.empty? ? ARGF.readlines.map(&:chomp) : ARGV
-
-  input.each do |accession|
-    stockholm_file = Rfam.new.download_stockholm accession
+  ARGF.each_line do |line|
+    accession_code = line.chomp
+    stockholm_file = Rfam.new.download_stockholm accession_code
     puts stockholm_file unless $stdout.tty?
   end
 end

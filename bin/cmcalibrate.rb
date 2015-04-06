@@ -18,9 +18,8 @@ if __FILE__ == $0
     end
   end.parse!
 
-  input = ARGV.empty? ? ARGF.readlines.map(&:chomp) : ARGV
-
-  input.each do |covariance_model|
+  ARGF.each_line do |line|
+    covariance_model = line.chomp
     calibrated_model = Infernal.new.calibrate covariance_model, options[:cpu]
     puts calibrated_model unless $stdout.tty?
   end

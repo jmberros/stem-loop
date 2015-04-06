@@ -5,9 +5,9 @@ require_relative '../stem-loop'
 
 
 if __FILE__ == $0
-  input = ARGV.empty? ? ARGF.readlines.map(&:chomp) : ARGV
   infernal = Infernal.new
-  input.each do |stockholm|
+  ARGF.each_line do |line|
+    stockholm = line.chomp
     covariance_model = infernal.cmbuild stockholm
 
     if $stdout.tty?
