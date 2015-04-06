@@ -1,18 +1,6 @@
 # Stem-loop
 Just a handy summary of some Bioinformatics tools I'm learning.
 
-## General remarks
-- You can add the following lines to your `~/.zshrc` for practicality:
-
-  ```
-  # Some bio utils from different suites
-  export PATH=/home/juan/bio/ViennaRNA-2.1.9/Utils:$PATH
-  export PATH=/home/juan/bio/RNAz-2.1/perl:$PATH
-  export PATH=/home/juan/bio/ncbi-blast-2.2.30+/bin:$PATH
-  ```
-
-  Of course, you should replace `/home/juan/bio` with the correct path for you.
-
 ## Infernal
 
 `Aligned sequences => Covariance Model ( + Genome ) => Find/Predict that sequence`
