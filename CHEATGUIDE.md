@@ -1,8 +1,6 @@
 # Stem-loop
 Just a handy summary of some Bioinformatics tools I'm learning.
 
-<img src="https://github.com/jmberros/stem-loop/blob/master/stem-loop.png">
-
 ## General remarks
 - You can add the following lines to your `~/.zshrc` for practicality:
 

@@ -1,8 +1,6 @@
 # Stem-loop
 An ever-growing collection of ruby scripts to deal with RNAs.
 
-<img src="https://github.com/jmberros/stem-loop/blob/master/stem-loop.png" width="200">
-
 ## Full pipeline
 It's recommended that you run these commands in a new directory, since they will create several files and it might turn into a mess if the working directory is not empty. You can change the `--cpu=1` to howmuchever CPU cores you want to use.
 
