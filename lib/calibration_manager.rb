@@ -30,6 +30,7 @@ class CalibrationManager
 
     if $stdout.tty?
       covariance_model = job_filename.gsub(".calibrate.job", "")
+      cores = `cat #{job_filename}`.scan(/--cpu (\d)/).flatten.first
       predicted_time = Infernal.new.forecast_calibration(covariance_model, 2)
       $logger.debug " ⌚ Expected calibration of #{predicted_time} (h:m:s) with #{cores} core(s)"
     end
