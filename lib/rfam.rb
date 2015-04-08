@@ -1,7 +1,6 @@
 class Rfam
   def download_stockholm(accession)
-    $logger.debug "\n 🌐 Download the Multiple Sequence Alignment with "\
-                  "accession code #{accession}"
+    $logger.debug "🌐 Download stockholm file for #{accession}"
 
     filename = "#{accession}.sto"
     `curl --silent -o #{filename} #{url(accession)}`
@@ -14,7 +13,7 @@ class Rfam
       `mv "#{original_filename}" #{filename}`
     end
 
-    $logger.debug " ✔ #{filename}".green.bold
+    $logger.debug "✔ #{filename}".green
     filename
   end
 
