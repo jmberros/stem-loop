@@ -65,3 +65,10 @@ PATH=$PATH:$HOME/<path-to-stem-loop>/bin
 ```
 That line goes in your shell config file, usually `~/.bashrc` or `~/.zshrc`.
 
+You will also need:
+* Ruby (check rbenv) and these ruby gems:
+  * colorize
+  * mustache
+* Python 2.x
+  * Numpy: `sudo apt-get install numpy`
+  * (Biopython)[http://biopython.org/wiki/Download]

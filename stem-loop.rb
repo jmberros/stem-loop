@@ -7,7 +7,7 @@
 
 require 'colorize'
 require 'mustache'
-require 'pry-debugger'
+require 'pry-debugger' if ENV['DEBUG']
 # ^ This workaround sucks, I should be using the Gemfile
 require 'optparse'
 
