@@ -19,33 +19,39 @@ If you want to generate the job scripts AND enqueue them right away:
 $ cat accession-codes | download-stockholms.rb | cmbuild.rb | cmcalibrate-enueque --cpu=1
 ```
 
-## Download Stockholm files from Rfam, given accession codes in a text file
+## Detail of each script
+### Download Stockholm files from Rfam, given accession codes in a text file
 ```shell
 $ cat accession-codes | download-stockholms.rb
 ```
 
 The file `accession-codes` is a plain-text file with one accession code per line. The script will search for the accession codes in Rfam online database and download the files in the working directory. It will also scan the stockholm for a `#GF ID` code, in order to give the file a meaningful name.
 
-## Build covariance models from all Stockholm files in a directory
+### Build covariance models from all Stockholm files in a directory
 ```shell
 $ ls *.sto | cmbuild.rb
 ```
 This script is meant to ease the process of building the covariance models from many stockholm files.
 
-## Calibrate all covariance models in a directory
+### Calibrate all covariance models in a directory
 ```shell
 $ ls *.cm | cmcalibrate.rb --cpu=1
 ```
 This process is time and CPU consuming. You should probably run it in a screen or tmux session.
 
-## Generate PBS job scripts for the calibration of all covariance models in a directory
+### Generate PBS job scripts for the calibration of all covariance models in a directory
 ```shell
 $ ls *.cm | cmcalibrate-job.rb --cpu=1 
 ```
 
-## Generate PBS job scripts for calibration of all CM in this directory AND enqueue them right away
+### Generate PBS job scripts for calibration of all CM in this directory AND enqueue them right away
 ```shell
 $ ls *.cm | cmcalibrate-enqueue.rb --cpu=1 
+```
+
+### Convert stockholm files to clustal format (for RNAz)
+```shell
+$ ls *.sto | sto-to-clustal.py
 ```
 
 ## Installation
