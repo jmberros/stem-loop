@@ -15,13 +15,12 @@ def slice_fasta(filename, subseq_name, start, end):
     if is_antisense:
         subseq_filename = subseq_filename.replace(".fa", "-antisense.fa")
         seq = seq_record.reverse_complement().seq
-        subseq_record = SeqRecord(seq[end-1:start-1])
+        subseq_record = SeqRecord(seq[end-1:start]) # Include limits of range
     else:
         seq = seq_record.seq
-        subseq_record = SeqRecord(seq[start-1:end-1])
+        subseq_record = SeqRecord(seq[start-1:end])
 
     subseq_record.id = "{}_{}".format(seq_record.name, subseq_name)
-    subseq_record.description = seq_record.description
     with open(subseq_filename, "w") as file:
         file.write(subseq_record.format("fasta"))
     return subseq_filename if os.path.isfile(subseq_filename) else None
