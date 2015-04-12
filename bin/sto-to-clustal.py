@@ -12,7 +12,7 @@ def sto_to_clustal(stockholm_filename):
     if os.path.isfile(stockholm_filename):
         AlignIO.convert(stockholm_filename, "stockholm",
                         clustal_filename, "clustal")
-        print clustal_filename 
+        return clustal_filename 
     else:
         sys.exit("❌ There's no filename '%s'" % stockholm_filename)
 
@@ -20,4 +20,5 @@ def sto_to_clustal(stockholm_filename):
 if __name__ == "__main__":
     for line in sys.stdin:
         filename = line.rstrip("\n")
-        sto_to_clustal(filename)
+        clustal_filename = sto_to_clustal(filename)
+        print clustal_filename
