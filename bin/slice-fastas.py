@@ -7,13 +7,15 @@ import argparse
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
-def slice_fasta(filename, subseq_name, start, end):
+def slice_fasta(filename, subseq_name, start, end, subdir="sliced-fastas"):
     is_antisense = end < start
     seq_record = SeqIO.read(filename, "fasta")
-    subseq_filename = filename.replace(".fa", "__{}.fa".format(subseq_name))
+    if not os.path.exists(subdir):
+        os.makedirs(subdir)
+    subseq_filename = subdir + "/" + \
+        filename.replace(".fa", "__sliced_{}.fa".format(subseq_name))
 
     if is_antisense:
-        subseq_filename = subseq_filename.replace(".fa", "-antisense.fa")
         seq = seq_record.reverse_complement().seq
         subseq_record = SeqRecord(seq[end-1:start]) # Include limits of range
     else:
@@ -28,6 +30,7 @@ def slice_fasta(filename, subseq_name, start, end):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Slice FASTAs")
     parser.add_argument("filename", help="FASTA to slice")
+    parser.add_argument("--subdir", help="Subdirectory to move sliced files")
     parser.add_argument("--name", help="Subsequence name")
     parser.add_argument("-f", "--from", type=int, help="Start nucleotide", required=True)
     parser.add_argument("-t", "--to", type=int, help="End nucleotide", required=True)
