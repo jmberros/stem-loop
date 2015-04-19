@@ -1,10 +1,11 @@
 class Infernal
   def cmbuild(stockholm_filename)
     cm_filename = stockholm_filename.gsub ".sto", ".cm"
+    logfile = stockholm_filename.gsub ".sto", ".log"
     abort("☹ File #{stockholm_filename} doesn't exist?") unless File.exist? stockholm_filename
 
     $logger.debug "⚒ Build covariance model for '#{stockholm_filename}'"
-    `cmbuild -F #{cm_filename} #{stockholm_filename}`
+    `cmbuild -F #{cm_filename} #{stockholm_filename} > #{logfile}`
 
     $logger.debug "✔ #{cm_filename}".green
     cm_filename

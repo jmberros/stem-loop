@@ -2,10 +2,10 @@ class Logger
   def debug(message)
     puts message if $stdout.tty? # Doesn't print help messages when piping
 
-    message = message.gsub("\n", "").chomp.strip
-    File.open(logfile, "a+") do |f|
-      f.puts "[ #{script} ][ #{time_formatted} ] #{message}"
-    end
+    #message = message.gsub("\n", "").chomp.strip
+    #File.open(logfile, "a+") do |f|
+      #f.puts "[ #{script} ][ #{time_formatted} ] #{message}"
+    #end
   end
 
   private
