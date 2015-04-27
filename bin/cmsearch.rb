@@ -12,7 +12,7 @@ def main
 
       $logger.debug "➡ cmsearch #{covariance_model} in #{fasta}"
 
-      `cmsearch --tblout #{filename}.tbl #{covariance_model} #{fasta} > #{filename}.cmsearch-output`
+      `cmsearch --tblout #{filename}.cmsearch.tbl #{covariance_model} #{fasta} > #{filename}.cmsearch-output`
     end
   end
 end
