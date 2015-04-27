@@ -3,7 +3,9 @@
 
 require_relative '../stem-loop'
 
-def main
+def main(opts={})
+  opts[:max] = ARGV.any? { |arg| arg == '--max' }
+
   Dir["*.c.cm"].each do |covariance_model|
     ( Dir["*.fa"] + Dir["*.fna"] ).each do |fasta|
 
@@ -12,7 +14,7 @@ def main
 
       $logger.debug "➡ cmsearch #{covariance_model} in #{fasta}"
 
-      `cmsearch --tblout #{filename}.cmsearch.tbl #{covariance_model} #{fasta} > #{filename}.cmsearch-output`
+      `cmsearch #{'--max' if opts[:max]} --tblout #{filename}.cmsearch.tbl #{covariance_model} #{fasta} > #{filename}.cmsearch-output`
     end
   end
 end
