@@ -4,17 +4,29 @@ class Rfam
 
     filename = "#{accession}.sto"
     `curl --silent -o #{filename} #{url(accession)}`
-
-    # Scan for a sequence ID to give a more meaningful name to the file
-    id = `cat #{filename} | grep "#=GF ID" | awk '{ print $NF }'`.chomp
-    unless id.empty?
-      original_filename = filename
-      filename = "#{id}." + filename
-      `mv "#{original_filename}" #{filename}`
-    end
+    filename = rename_from_metadata(filename)
 
     $logger.debug "✔ #{filename}".green
     filename
+  end
+
+  def rename_from_metadata(filename)
+    # Scan for an ID or NAME to give a more meaningful filename
+    # ID is found in stockholms, NAME is found in covariance models
+
+    # Quit if it's a CM database
+    return if `cat #{filename} | grep NAME | wc -l`.chomp.to_i > 2
+
+    id = `cat #{filename} | grep "#=GF ID" | head -n1 | awk '{ print $NF }'`.chomp
+    name = `cat #{filename} | grep "NAME" | head -n1 | awk '{ print $NF }'`.chomp
+    id = id.empty? ? nil : id
+    name = name.empty? ? nil : name
+
+    if id || name
+      new_filename = "#{id || name}." + filename
+      `mv #{filename} #{new_filename}`
+    end
+    new_filename || filename
   end
 
   private

@@ -5,7 +5,7 @@ require_relative '../stem-loop'
 
 def main
   Dir["*.c.cm"].each do |covariance_model|
-    Dir["*.fa"].each do |fasta|
+    ( Dir["*.fa"] + Dir["*.fna"] ).each do |fasta|
 
       filename =
         "#{covariance_model.gsub(".c.cm", "")}__in__#{fasta.gsub(".fa", "")}"
