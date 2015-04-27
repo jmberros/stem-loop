@@ -11,7 +11,7 @@ require 'pry-debugger' if ENV['DEBUG']
 # ^ This workaround sucks, I should be using the Gemfile
 require 'optparse'
 
-require 'fileutils' # Necessary?
+require 'fileutils'
 
 #require 'action_view' # FUCK Nokogiri
 #include ActionView::Helpers::DateHelper
