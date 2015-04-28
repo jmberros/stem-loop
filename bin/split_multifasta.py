@@ -12,7 +12,7 @@ def split_multifasta(multifasta_filename, batch_size=1000):
         offset = (i * batch_size) + 1
         limit = offset + batch_size - 1
         batch_filename = multifasta_filename + \
-            "__batch-{0}-{1}.fasta".format(offset, limit)
+            "__batch-{}__{}-{}.fasta".format((i+1), offset, limit)
         with open(batch_filename, "w") as batch_file:
             count = SeqIO.write(batch, batch_file, "fasta")
             print "Wrote {} records to {}".format(count, batch_filename)
