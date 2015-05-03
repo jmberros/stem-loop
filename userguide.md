@@ -8,7 +8,7 @@ Supposing you named the file `accesion-codes`, this command will download the
 stockholm alignments from Rfam, build the covariance models and enqueue a
 calibration job for each model. You must run this in the server:
 
-`cat accession-codes | download-stockholms.rb | cmbuild.rb | cmcalibrate-enueque --cpu=1`
+`cat accession-codes | download-stockholms.rb | cmbuild.rb | cmcalibrate-enqueue.rb --cpu=1`
 
 You can modify the `--cpu=1` option to specify more cores for the calibration.
 

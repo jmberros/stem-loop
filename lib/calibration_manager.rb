@@ -49,7 +49,6 @@ class CalibrationManager
       queue_name: 'default',
       nodes: 1,
       cores: 1,
-      mail: "juanmaberros@gmail.com" # Hardcoded email? C'mon ...
     }
   end
 end
