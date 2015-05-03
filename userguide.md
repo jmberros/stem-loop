@@ -31,11 +31,12 @@ Every new file is created in the working directory.
 
 Once you have the covariance models calibrated (files ending in `c.cm`), copy
 them to a new folder with the FASTAs you want to query. The wrapper command
-`cmsearch.rb` (don't miss the `.rb` part!) will perform a `cmsearch` of each
-model in the directory in each FASTA (`.fa` or `.fna` fliles) it can find in
-the same directory. You can also add the `--max` flag like this: `cmsearch.rb --max`.
+`cmsearch.rb` (don't miss the `.rb` part!) will use each model in the directory
+to perform a `cmsearch` in each FASTA (`.fa` or `.fna` fliles) it can find in
+the same directory.
 
-According to Infernal's man pages:
+You can also add the `--max` flag like this: `cmsearch.rb --max`. According to
+Infernal's man pages:
 
     --max  Turn off all filters, and run non-banded Inside on every full-length target sequence.  This  increases
            sensitivity somewhat, at an extremely large cost in speed.
