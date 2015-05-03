@@ -8,8 +8,9 @@ def main(opts={})
   fastas = Dir["*.fa"] + Dir["*.fna"]
   models = Dir["*.c.cm"]
 
-  fail "[!] No FASTAs found in this directory (.fa or .fna)" if fastas.empty?
-  fail "[!] No models found in this directory (.c.cm)" if models.empty?
+  puts "[!] No FASTAs found in this directory (.fa or .fna)" if fastas.empty?
+  puts "[!] No models found in this directory (.c.cm)" if models.empty?
+  exit if fastas.empty? || models.empty?
 
   models.each do |covariance_model|
     fastas.each do |fasta|
