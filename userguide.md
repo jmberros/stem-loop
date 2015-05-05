@@ -8,14 +8,18 @@ Supposing you named the file `accesion-codes`, this command will download the
 stockholm alignments from Rfam, build the covariance models and enqueue a
 calibration job for each model. You must run this in the server:
 
-`cat accession-codes | download-stockholms.rb | cmbuild.rb | cmcalibrate-enqueue.rb --cpu=1`
+```bash
+cat accession-codes | download-stockholms.rb | cmbuild.rb | cmcalibrate-enqueue.rb --cpu=1
+```
 
 You can modify the `--cpu=1` option to specify more cores for the calibration.
 
 If you want to download the alignments and build the models, but you're not
 interested in the calibration, you can remove the last part of the previous command:
 
-`cat accession-codes | download-stockholms.rb | cmbuild.rb`
+```bash
+cat accession-codes | download-stockholms.rb | cmbuild.rb
+```
 
 Simlarly, remove the `| cmbuild.rb` bit to download the alignments, but
 not build the covariance models.
@@ -23,7 +27,9 @@ not build the covariance models.
 Finally, if you happen to want the calibration job files written, but not yet
 enqueued, you can run this:
 
-`cat accession-codes | download-stockholms.rb | cmbuild.rb | cmcalibrate-job --cpu=1`
+```bash
+cat accession-codes | download-stockholms.rb | cmbuild.rb | cmcalibrate-job --cpu=1
+```
 
 Every new file is created in the working directory.
 
@@ -43,11 +49,15 @@ Infernal's man pages:
 
 So, after running one of these commands:
 
-`cmsearch.rb`
+```bash
+cmsearch.rb
+```
 
 or
 
-`cmsearch.rb --max`
+```bash
+cmsearch.rb --max
+```
 
 you will have the results written in a `.tbl` and a `.cmsearch-output` file
 for each combination of model and target sequence in the directory. You don't
@@ -56,7 +66,9 @@ need to concatenate all the FASTAs in one big multiFASTA for this process.
 You can then browse the results separately, or merge them in a CSV file with
 the following command:
 
-`cat *.tbl | grep ! | awk '{ s=""; for (i=1; i<=17; i++) s=s $i ","; print s }' > all-results.csv`
+```bash
+cat *.tbl | grep ! | awk '{ s=""; for (i=1; i<=17; i++) s=s $i ","; print s }' > all-results.csv
+```
 
 Explanation:
 
