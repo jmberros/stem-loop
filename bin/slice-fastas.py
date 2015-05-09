@@ -24,11 +24,14 @@ def slice_fasta(filename, subseq_name, start, end, subdir):
         filename.replace(".fa", "__sliced_{}.fa".format(subseq_name))
 
     if is_antisense:
-        seq = seq_record.reverse_complement().seq
+        #seq = seq_record.reverse_complement().seq
+        seq = seq_record.seq
         subseq_record = SeqRecord(seq[end-1:start]) # Include limits of range
+        subseq_record.description = "from {} to {}".format(end, start)
     else:
         seq = seq_record.seq
         subseq_record = SeqRecord(seq[start-1:end]) # Include limits of range
+        subseq_record.description = "{} from {} to {}".format(seq_record.name, start, end)
 
     subseq_record.id = "{}_{}".format(seq_record.name, subseq_name)
     with open(subseq_filename, "w") as file:
