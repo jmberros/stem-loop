@@ -80,15 +80,18 @@ def find_fasta_by_id(id):
 
 def prettify_hit(hit):
     # This could be done better. Maybe a mustache template?
-    entry = ""
-    entry += " ⨉" if hit['trunc'] == "3'" else "  "
-    entry += "{seq_from}..{seq_to}"
-    entry += " ⨉" if hit['trunc'] == "5'" else "  "
-    entry += " ({strand})"
-    entry += " {model} ({accession}),"
-    entry += " {mdl_percentage}% ({mdl_from}-{mdl_to}/{mdl_length})"
-    entry += ", E-value: {e_value}"
-    return entry.format(**hit)
+    trunc_3 = " ⨉" if hit['trunc'] == "3'" else "  "
+    seq_range = "{seq_from}..{seq_to}"
+    trunc_5 = " ⨉" if hit['trunc'] == "5'" else "  "
+    strand = " ({strand})"
+    model = " {model} ({accession}),"
+    model_stats = " {mdl_percentage}% ({mdl_from}-{mdl_to}/{mdl_length})"
+    e_value = ", E-value: {e_value}"
+
+    hit_string = "".join(
+        [trunc_3, seq_range, trunc_5, strand, model, model_stats, e_value]
+    ).format(**hit)
+    return hit_string
 
 
 def parse_csv_row(row):
