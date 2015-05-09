@@ -50,9 +50,10 @@ def main():
 
 def is_a_dupe_hit(hit, hits):
     # Checks if this is a duplicated hit and NOT the top one
-    similar_hits = [h for h in hits if h['accession'] == hit['accession'] and
-                                       h['seq_from'] == hit['seq_from'] and
-                                       h['seq_to'] == hit['seq_to']]
+    similar_hits = [h for h in hits
+                    if h['accession'] == hit['accession'] and
+                    h['seq_from'] == hit['seq_from'] and
+                    h['seq_to'] == hit['seq_to']]
     top_hit = min(similar_hits, key=lambda hit: hit['e_value'])
     return hit != top_hit
 
