@@ -8,9 +8,9 @@ import os
 import re
 import argparse
 import csv
-import ipdb  # Debug
+import pystache
 
-from pprint import pprint  # Debug
+# from pprint import pprint  # Debug
 from subprocess import check_output
 from Bio import SeqIO
 
@@ -19,7 +19,7 @@ class InfernalOutputParser:
     def parse_results(self, hits_filename, accessory_filename=None):
         hits_per_scaffold = {}
 
-        # Read the hits CSV passed as first argument and parse its rows
+        # Read the hits CSV and parse its rows
         with open(hits_filename, 'r') as results_csv:
             results = csv.reader(results_csv)
             for row in results:
@@ -28,7 +28,7 @@ class InfernalOutputParser:
                     hits_per_scaffold[hit['scaffold']] = []
                 hits_per_scaffold[hit['scaffold']].append(hit)
 
-        # Read extra elements from accessory file with coordinates and names
+        # Read extra elements from an accessory file with coordinates and names
         with open(accessory_filename, 'r') as accessory_csv:
             results = csv.reader(accessory_csv)
             for row in results:
@@ -41,25 +41,44 @@ class InfernalOutputParser:
         for scaffold, hits in hits_per_scaffold.items():
             unique_hits = [dict(tuples) for tuples in set(tuple(hit.items())
                            for hit in hits)]
-            pprint(unique_hits)
             selected = [
                 h for h in unique_hits
                 if not self.is_a_dupe_hit(h, hits_per_scaffold[scaffold])
             ]
             hits_per_scaffold[scaffold] = selected
 
-        # Write a file with the hits by scaffold
+        # Write a CSV file with the hits by scaffold
         output_filename = hits_filename + ".parsed-by-scaffold"
         with open(output_filename, 'w+') as output_file:
             for scaffold, hits in hits_per_scaffold.items():
                 title = scaffold
                 seq_record = self.find_fasta_by_id(scaffold)
+
                 if seq_record:
                     title += " ({} pb)".format(len(seq_record))
                 print(title, file=output_file)
                 for hit in sorted(hits, key=lambda hit: hit['seq_from']):
-                    print(self.prettify_hit(hit), file=output_file)
-                print("-----", file=output_file)
+                    print(hit, file=output_file)
+                print("", file=output_file)
+
+        # Write an HTML file
+        html_filename = hits_filename + ".html"
+        templ = self.formatted_hits_template()
+        with open(html_filename, 'w+') as html, open(templ, 'r') as template:
+            hits_per_scaffold_list = [
+                {'scaffold': scaffold,
+                 'scaffold_length': self.scaffold_length(scaffold),
+                 'hits': sorted(hits, key=lambda hit: hit['seq_from'])}
+                for scaffold, hits in hits_per_scaffold.items()
+            ]
+            template_data = {
+                'hits_per_scaffold': hits_per_scaffold_list,
+                'input_filename': hits_filename,
+                'output_filename': output_filename,
+            }
+            rendered_template = pystache.render(template.read(),
+                                                template_data)
+            print(rendered_template, file=html)
 
     # Helper methods #
 
@@ -91,20 +110,33 @@ class InfernalOutputParser:
             if len(records) > 0:
                 return records[0]
 
-    def prettify_hit(self, hit):
-        hit['trunc_3'] = "x" if hit.get('trunc_3') else " "
-        hit['trunc_5'] = "x" if hit.get('trunc_5') else " "
-        if hit.get('accession'):
-            hit['model'] = "{model} ({accession})".format(**hit)
-        if hit.get('e_value'):
-            hit['extra_info'] = ("{mdl_percentage}% "
-                                 "({mdl_from}-{mdl_to}/{mdl_length}), "
-                                 "E-value: {e_value}").format(**hit)
-        else:
-            hit['extra_info'] = hit.get('extra_info') or ""
+    def scaffold_length(self, scaffold):
+        seq_record = self.find_fasta_by_id(scaffold)
+        if seq_record:
+            return len(seq_record)
 
-        return ("{trunc_3}{seq_from}..{seq_to}{trunc_5}""({strand}) "
-                "{model}, {extra_info}").format(**hit)
+    def formatted_hits_template(self):
+        return os.path.normpath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "../templates/formatted_hits.html.mustache"
+        ))
+
+    # def prettify_hit(self, hit):
+        # hit['trunc_3'] = "x" if hit.get('trunc_3') else " "
+        # hit['trunc_5'] = "x" if hit.get('trunc_5') else " "
+        # hit['seq_info'] = ("{seq_length} nt ({percentage_of_scaffold}% "
+                           # "of target seq)").format(**hit)
+        # if hit.get('accession'):
+            # hit['model'] = "{model} ({accession})".format(**hit)
+        # if hit.get('e_value'):
+            # hit['extra_info'] = ("{mdl_percentage}% model "
+                                 # "({mdl_from}-{mdl_to}/{mdl_length}), "
+                                 # "E-value: {e_value}").format(**hit)
+        # else:
+            # hit['extra_info'] = hit.get('extra_info') or ""
+
+        # return ("{trunc_3}{seq_from}..{seq_to}{trunc_5}\t({strand})\t"
+                # "{model}\t{seq_info}\t{extra_info}").format(**hit)
 
     def parse_accessory_element(self, row):
         element = {
@@ -119,6 +151,7 @@ class InfernalOutputParser:
         except IndexError:
             pass
 
+        self.add_seq_data(element)
         # Swap start and end for elements in the antisense strands
         if element['seq_from'] > element['seq_to']:
             element['seq_from'] = int(row[2])
@@ -150,6 +183,7 @@ class InfernalOutputParser:
         hit['trunc_5'] = row[10] == "5'"
         # TODO: What's the notation for truncation in both ends?
 
+        self.add_seq_data(hit)
         # Swap start and end for antisense hits
         if hit['strand'] == '-':
             hit['seq_from'] = int(row[8])
@@ -167,6 +201,15 @@ class InfernalOutputParser:
                                     hit['mdl_length'])
 
         return hit
+
+    def add_seq_data(self, element):
+        seq_record = self.find_fasta_by_id(element['scaffold'])
+        element['seq_length'] = abs(element['seq_to']-element['seq_from']) + 1
+        element['seq_percentage'] = round(100 * element['seq_length'] /
+                                          len(seq_record.seq), 2)
+        first_nucleotide = min(element['seq_from'], element['seq_to'])
+        element['seq_offset_percentage'] = round(100 * first_nucleotide /
+                                                 len(seq_record.seq), 2)
 
 
 if __name__ == '__main__':

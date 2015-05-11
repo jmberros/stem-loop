@@ -1,0 +1,196 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Formatted Hits</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+      html {
+        font-size: 13px;
+      }
+      body { 
+        color: #333;
+        font-family: monospace;
+      }
+      h1 {
+        font-size: 17px;
+      }
+      h2 {
+        font-size: 15px;
+        color: cornflowerBlue;
+      }
+      th, td {
+        text-align: center;
+      }
+      th {
+        font-weight: normal;
+        color: #999;
+      }
+      th, tr:not(:last-child) td {
+        border-bottom: 1px solid silver;
+        padding: 3px;
+      }
+      .range {
+        width: 115px;
+      }
+      .trunc {
+        width: 10px;
+        font-weight: bold;
+        color: tomato;
+      }
+      .name {
+        text-align: left;
+        color: darkOrange;
+        font-weight: bold;
+      }
+      .accession {
+        color: #999;
+      }
+      .scaffold-hits {
+        padding: 15px;
+        margin-bottom: 4px;
+        border: 1px solid silver;
+        border-radius: 3px;
+        box-shadow: 2px 2px 2px #ddd;
+      }
+      .gene-viz {
+        width: 100%;
+        margin-bottom: 10px;
+        height: 15px;
+        background-color: ghostWhite;
+        border: 1px solid silver;
+        border-radius: 2px;
+      }
+      .gene {
+        width: 100%;
+        margin-bottom: 2px;
+      }
+      .gene__match {
+        background-color: #9366b4;
+        border-radius: 2px;
+        height: 4px;
+      }
+      .gene__name {
+        font-size: 10px;
+        color: silver;
+      }
+      .gene-viz__match {
+        position: relative;
+        height: 15px;
+        opacity: 0.7;
+      }
+      .gene-viz__match:nth-child(even) {
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQIW2NkQAX/GZH4/4FsRpgAmAOSBBFwDkgAAIKuBATRTAAZAAAAAElFTkSuQmCC) repeat;
+        position: absolute;
+      }
+      .gene-viz__match:nth-child(odd) {
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=) repeat;
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>All hits contained in "{{input_filename}}"</h1>
+    <p>
+      Check these results in CSV format:
+      <a href="{{output_filename}}">{{output_filename}}</a>
+    </p>
+
+    {{#hits_per_scaffold}}
+      <div class="scaffold-hits">
+        <h2>{{scaffold}}</h2>
+
+        <p>Total scaffold length: {{scaffold_length}} bp</p>
+
+        <div class="gene-viz">
+          {{#hits}}
+            <div class="gene-viz__match" name="{{model}}" style="width: {{seq_percentage}}%; margin-left: {{seq_offset_percentage}}%;"></div>
+          {{/hits}}
+        </div>
+        {{#hits}}
+        <div class="gene" name="{{model}}">
+          <div class="gene__match" style="width: {{seq_percentage}}%; margin-left: {{seq_offset_percentage}}%;"></div>
+          <div class="gene__name" style="margin-left: {{seq_offset_percentage}}%;">
+            {{model}}
+          </div>
+        </div>
+        {{/hits}}
+
+        <table>
+          <tbody>
+            <tr>
+              <th>5'</th>
+              <th>Range</th>
+              <th>3'</th>
+              <th></th>
+              <th>Model</th>
+              <th>Accession</th>
+              <th>Length</th>
+              <th>% of Target</th>
+              <th colspan="2">Model % matched</th>
+              <th>E-value</th>
+            </tr>
+
+            {{#hits}}
+              <tr>
+                <td class="trunc">
+                  {{#trunc_5}}«{{/trunc_5}}
+                </td>
+
+                <td class="range">
+                  {{seq_from}} .. {{seq_to}}
+                </td>
+
+                <td class="trunc">
+                  {{#trunc_3}}»{{/trunc_3}}
+                </td>
+                
+                <td>({{strand}})</td>
+
+                <td class="name">
+                  {{model}}
+                </td>
+
+                <td class="accession">
+                  {{accession}}
+                </td>
+
+                <td>
+                  {{seq_length}}
+                </td>
+
+                <td>
+                  {{seq_percentage}}%
+                </td>
+
+                <td>
+                  {{#mdl_percentage}}
+                    {{mdl_percentage}}%
+                  {{/mdl_percentage}}
+                </td>
+
+                <td>
+                  {{#mdl_length}}
+                    ({{mdl_from}}-{{mdl_to}}/{{mdl_length}})
+                  {{/mdl_length}}
+                </td>
+
+                <td>
+                  {{e_value}}
+                </td>
+
+                {{#extra_info}}
+                  <td>
+                    {{extra_info}}
+                  </td>
+                {{/extra_info}}
+              </tr>
+            {{/hits}}
+          <tbody>
+        </table>
+      </div>
+    {{/hits_per_scaffold}}
+  </body>
+</html>
+
