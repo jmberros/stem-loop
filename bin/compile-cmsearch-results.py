@@ -4,41 +4,54 @@
 from __future__ import division
 from __future__ import print_function
 
+import sys
 import os
 import re
 import argparse
 import csv
 import pystache
+import logging
 
 # from pprint import pprint  # Debug
 from subprocess import check_output
 from Bio import SeqIO
 
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
 
 class InfernalOutputParser:
+    def __init__(self):
+        self.scaffold_lengths = {}
+
     def parse_results(self, hits_filename, accessory_filename=None):
+        # logging.debug("hits_filename: {}".format(hits_filename))
+        # logging.debug("accessory_filename: {}".format(accessory_filename))
         hits_per_scaffold = {}
 
         # Read the hits CSV and parse its rows
         with open(hits_filename, 'r') as results_csv:
             results = csv.reader(results_csv)
             for row in results:
+                # logging.debug("parse hit:\n->{}".format(row))
                 hit = self.parse_cmsearch_hit(row)
                 if not hit['scaffold'] in hits_per_scaffold.keys():
                     hits_per_scaffold[hit['scaffold']] = []
                 hits_per_scaffold[hit['scaffold']].append(hit)
 
         # Read extra elements from an accessory file with coordinates and names
-        with open(accessory_filename, 'r') as accessory_csv:
-            results = csv.reader(accessory_csv)
-            for row in results:
-                element = self.parse_accessory_element(row)
-                if not element['scaffold'] in hits_per_scaffold.keys():
-                    hits_per_scaffold[element['scaffold']] = []
-                hits_per_scaffold[element['scaffold']].append(element)
+        if accessory_filename:
+            with open(accessory_filename, 'r') as accessory_csv:
+                results = csv.reader(accessory_csv)
+                for row in results:
+                    # logging.debug("parse this row:\n\t{}".format(row))
+                    element = self.parse_accessory_element(row)
+                    if not element['scaffold'] in hits_per_scaffold.keys():
+                        hits_per_scaffold[element['scaffold']] = []
+                    hits_per_scaffold[element['scaffold']].append(element)
 
         # Deal with duplicate hits
         for scaffold, hits in hits_per_scaffold.items():
+            # logging.debug("check if {} hits are dupes".format(scaffold))
             unique_hits = [dict(tuples) for tuples in set(tuple(hit.items())
                            for hit in hits)]
             selected = [
@@ -49,13 +62,14 @@ class InfernalOutputParser:
 
         # Write a CSV file with the hits by scaffold
         output_filename = hits_filename + ".parsed-by-scaffold"
+        # logging.debug("write to {}".format(output_filename))
         with open(output_filename, 'w+') as output_file:
             for scaffold, hits in hits_per_scaffold.items():
                 title = scaffold
-                seq_record = self.find_fasta_by_id(scaffold)
+                seq_length = self.scaffold_length(scaffold)
 
-                if seq_record:
-                    title += " ({} pb)".format(len(seq_record))
+                if seq_length:
+                    title += " ({} pb)".format(seq_length)
                 print(title, file=output_file)
                 for hit in sorted(hits, key=lambda hit: hit['seq_from']):
                     print(hit, file=output_file)
@@ -64,6 +78,7 @@ class InfernalOutputParser:
         # Write an HTML file
         html_filename = hits_filename + ".html"
         templ = self.formatted_hits_template()
+        # logging.debug("write to {}".format(html_filename))
         with open(html_filename, 'w+') as html, open(templ, 'r') as template:
             hits_per_scaffold_list = [
                 {'scaffold': scaffold,
@@ -103,17 +118,19 @@ class InfernalOutputParser:
     def models(self):
         return [f for f in self.files() if ".c.cm" in f]
 
-    def find_fasta_by_id(self, id):
-        for fasta in self.fasta_files():
-            records = \
-                [r for r in SeqIO.parse(fasta, "fasta") if r.id == id]
-            if len(records) > 0:
-                return records[0]
+    def scaffold_length(self, id):
+        logging.debug("--> search for {}".format(id))
+        if not self.scaffold_lengths.get(id):
+            for fasta in self.fasta_files():
+                records = \
+                    [r for r in SeqIO.parse(fasta, "fasta") if r.id == id]
+                if len(records) > 0:
+                    self.scaffold_lengths[id] = len(records[0])
+                    logging.debug(self.scaffold_lengths)
+        else:
+            logging.debug("hit cache!")
 
-    def scaffold_length(self, scaffold):
-        seq_record = self.find_fasta_by_id(scaffold)
-        if seq_record:
-            return len(seq_record)
+        return self.scaffold_lengths[id]
 
     def formatted_hits_template(self):
         return os.path.normpath(os.path.join(
@@ -163,6 +180,7 @@ class InfernalOutputParser:
         return element
 
     def parse_cmsearch_hit(self, row):
+        # logging.debug("-> parse cmsearch hit")
         hit = {
             'scaffold': row[0],
             'model': row[2],
@@ -203,19 +221,21 @@ class InfernalOutputParser:
         return hit
 
     def add_seq_data(self, element):
-        seq_record = self.find_fasta_by_id(element['scaffold'])
+        # logging.debug("add_seq_data to {}".format(element))
+        seq_length = self.scaffold_length(element['scaffold'])
         element['seq_length'] = abs(element['seq_to']-element['seq_from']) + 1
         element['seq_percentage'] = round(100 * element['seq_length'] /
-                                          len(seq_record.seq), 2)
+                                          seq_length, 2)
         first_nucleotide = min(element['seq_from'], element['seq_to'])
         element['seq_offset_percentage'] = round(100 * first_nucleotide /
-                                                 len(seq_record.seq), 2)
+                                                 seq_length, 2)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Compile cmsearch result CSV")
     parser.add_argument('hits_filename')
-    parser.add_argument('accessory_filename', default=None)
+    parser.add_argument('--accessory-filename',
+                        help="accesory CSV with coordinates")
     options = vars(parser.parse_args())
 
     InfernalOutputParser().parse_results(options['hits_filename'],
