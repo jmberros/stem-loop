@@ -6,7 +6,7 @@ require_relative '../stem-loop'
 def main(opts={})
   opts[:max] = ARGV.any? { |arg| arg == '--max' } # TODO: This should be optparsed earlier
   fastas = Dir["*.fa"] + Dir["*.fna"]
-  models = Dir["*.c.cm*"]
+  models = Dir["*.c.cm"] + Dir["*.c.cm.txt"]
 
   puts "[!] No FASTAs found in this directory (.fa or .fna)" if fastas.empty?
   puts "[!] No models found in this directory (.c.cm)" if models.empty?
