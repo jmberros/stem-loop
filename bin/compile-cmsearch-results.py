@@ -119,16 +119,14 @@ class InfernalOutputParser:
         return [f for f in self.files() if ".c.cm" in f]
 
     def scaffold_length(self, id):
-        logging.debug("--> search for {}".format(id))
+        # logging.debug("--> search for {}".format(id))
         if not self.scaffold_lengths.get(id):
             for fasta in self.fasta_files():
                 records = \
                     [r for r in SeqIO.parse(fasta, "fasta") if r.id == id]
                 if len(records) > 0:
                     self.scaffold_lengths[id] = len(records[0])
-                    logging.debug(self.scaffold_lengths)
-        else:
-            logging.debug("hit cache!")
+                    # logging.debug(self.scaffold_lengths)
 
         return self.scaffold_lengths[id]
 
@@ -138,29 +136,13 @@ class InfernalOutputParser:
             "../templates/formatted_hits.html.mustache"
         ))
 
-    # def prettify_hit(self, hit):
-        # hit['trunc_3'] = "x" if hit.get('trunc_3') else " "
-        # hit['trunc_5'] = "x" if hit.get('trunc_5') else " "
-        # hit['seq_info'] = ("{seq_length} nt ({percentage_of_scaffold}% "
-                           # "of target seq)").format(**hit)
-        # if hit.get('accession'):
-            # hit['model'] = "{model} ({accession})".format(**hit)
-        # if hit.get('e_value'):
-            # hit['extra_info'] = ("{mdl_percentage}% model "
-                                 # "({mdl_from}-{mdl_to}/{mdl_length}), "
-                                 # "E-value: {e_value}").format(**hit)
-        # else:
-            # hit['extra_info'] = hit.get('extra_info') or ""
-
-        # return ("{trunc_3}{seq_from}..{seq_to}{trunc_5}\t({strand})\t"
-                # "{model}\t{seq_info}\t{extra_info}").format(**hit)
-
     def parse_accessory_element(self, row):
         element = {
             'scaffold': row[0],
             'seq_from': int(row[1]),
             'seq_to': int(row[2]),
             'model': row[3],
+            'inclussion': "!",  # Assume we're sure of the element's presence
         }
 
         try:
@@ -194,7 +176,7 @@ class InfernalOutputParser:
             'bias': float(row[13]),
             'bit_score': float(row[14]),
             'e_value': float(row[15]),
-            'inclussion': row[16],
+            'inclussion': row[16] == "!",
         }
 
         hit['trunc_3'] = row[10] == "3'"
