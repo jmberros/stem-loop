@@ -7,28 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">
       html {
-        font-size: 13px;
+        font-size: 12px;
       }
       body { 
-        color: #333;
+        color: #222;
         font-family: monospace;
       }
-      h1 {
-        font-size: 17px;
-      }
       h2 {
-        font-size: 15px;
+        font-size: 14px;
         color: cornflowerBlue;
       }
-      th, td {
+      .hits-table th, .hits-table td {
         text-align: center;
       }
-      th {
+      .hits-table th {
         font-weight: normal;
         color: #999;
       }
-      th, tr:not(:last-child) td {
-        border-bottom: 1px solid silver;
+      .hits-table th, .hits-table tr:not(:last-child) td {
+        border-bottom: 1px solid #ccc;
         padding: 3px;
       }
       .range {
@@ -57,6 +54,9 @@
       tr:not(.low-evalue) > td {
         background-color: #ffcccc;
       }
+      tr.accessory > td {
+        background-color: #ddf5ff;
+      }
 
       .gene {
         width: 100%;
@@ -74,6 +74,9 @@
       .gene__match.low-evalue {
         background-color: limeGreen;
       }
+      .gene__match.accessory {
+        background-color: cornflowerBlue;
+      }
 
       .gene-viz {
         position: relative;
@@ -88,44 +91,47 @@
         height: 15px;
         opacity: 0.7;
       }
-      .gene-viz__match:nth-child(even) {
-        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQIW2NkQAX/GZH4/4FsRpgAmAOSBBFwDkgAAIKuBATRTAAZAAAAAElFTkSuQmCC) repeat;
+      .gene-viz__match {
         position: absolute;
+        background-color: tomato;
+        opacity: 0.25;
       }
-      .gene-viz__match:nth-child(odd) {
-        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=) repeat;
+      .gene-viz__match.low-evalue {
         position: absolute;
+        background-color: limeGreen;
+        opacity: 0.25;
+      }
+      .gene-viz__match.accessory {
+        background-color: cornflowerBlue;
+        opacity: 0.5;
       }
     </style>
   </head>
+
   <body>
-    <h1>All hits contained in "{{input_filename}}"</h1>
-    <p>
-      Check these results in CSV format:
-      <a href="{{output_filename}}">{{output_filename}}</a>
-    </p>
+    <p>{{unique_hits_count}} total hits</p>
 
     {{#hits_per_scaffold}}
       <div class="scaffold-hits">
-        <h2>{{scaffold}}</h2>
+        <h2>{{target_name}}</h2>
 
-        <p>Total scaffold length: {{scaffold_length}} bp</p>
+        <p>Total scaffold length: {{target_length}} bp</p>
 
         <div class="gene-viz">
           {{#hits}}
-            <div class="gene-viz__match" name="{{model}}" style="width: {{seq_percentage}}%; margin-left: {{seq_offset_percentage}}%;"></div>
+            <div class="gene-viz__match {{#above_inclussion}}low-evalue{{/above_inclussion}} {{#accessory}}accessory{{/accessory}}" name="{{query_name}}" style="width: {{seq_percentage}}%; margin-left: {{seq_offset_percentage}}%;"></div>
           {{/hits}}
         </div>
         {{#hits}}
-        <div class="gene" name="{{model}}">
-          <div class="gene__match {{#inclussion}}low-evalue{{/inclussion}}" style="width: {{seq_percentage}}%; margin-left: {{seq_offset_percentage}}%;"></div>
+        <div class="gene" name="{{query_name}}">
+          <div class="gene__match {{#above_inclussion}}low-evalue{{/above_inclussion}} {{#accessory}}accessory{{/accessory}}" style="width: {{seq_percentage}}%; margin-left: {{seq_offset_percentage}}%;"></div>
           <div class="gene__name" style="margin-left: {{seq_offset_percentage}}%;">
-            {{model}}
+            {{query_name}}
           </div>
         </div>
         {{/hits}}
 
-        <table>
+        <table class="hits-table">
           <tbody>
             <tr>
               <th>5'</th>
@@ -142,7 +148,7 @@
             </tr>
 
             {{#hits}}
-              <tr class="{{#inclussion}}low-evalue{{/inclussion}}">
+              <tr class="{{#above_inclussion}}low-evalue{{/above_inclussion}} {{#accessory}}accessory{{/accessory}}">
                 <td class="trunc">
                   {{#trunc_5}}«{{/trunc_5}}
                 </td>
@@ -158,11 +164,11 @@
                 <td>({{strand}})</td>
 
                 <td class="name">
-                  {{model}}
+                  {{query_name}}
                 </td>
 
                 <td class="accession">
-                  {{accession}}
+                  {{query_accession}}
                 </td>
 
                 <td>
@@ -190,8 +196,7 @@
                 </td>
 
                 <td>
-                  {{#inclussion}}!{{/inclussion}}
-                  {{^inclussion}}?{{/inclussion}}
+                  {{#inclussion}}{{inclussion}}{{/inclussion}}
                 </td>
 
                 {{#extra_info}}

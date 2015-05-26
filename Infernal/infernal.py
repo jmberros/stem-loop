@@ -1,0 +1,2 @@
+from lib.infernal_output_parser import InfernalOutputParser
+
