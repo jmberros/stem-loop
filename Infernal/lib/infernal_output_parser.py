@@ -189,18 +189,18 @@ class InfernalOutputParser:
             100 * first_nucleotide / target_length
 
     def round_some_fields(self, df):
-        try:
-            df.match_length.update(df.match_length.astype(int))
-            df.mdl_percentage = df.mdl_percentage.round(decimals=0)
-            df.mdl_from = df.mdl_from.round(decimals=0)
-            df.mdl_to = df.mdl_to.round(decimals=0)
-            df.mdl_length = df.mdl_length.round(decimals=0)
-            df.e_value = df.e_value.round(decimals=7)
-        except AttributeError:
-            pass
+        # try:
+            # df.match_length.update(df.match_length.astype(int))
+            # df.mdl_percentage = df.mdl_percentage.round(decimals=0)
+            # df.mdl_from = df.mdl_from.round(decimals=0)
+            # df.mdl_to = df.mdl_to.round(decimals=0)
+            # df.mdl_length = df.mdl_length.round(decimals=0)
+            # df.e_value = df.e_value.round(decimals=7)
+        # except AttributeError:
+            # pass
 
-        df.seq_length = df.seq_length.round(decimals=0)
-        df.seq_percentage = df.seq_percentage.round(decimals=0)
+        # df.seq_length = df.seq_length.round(decimals=0)
+        # df.seq_percentage = df.seq_percentage.round(decimals=0)
 
         return df
 
