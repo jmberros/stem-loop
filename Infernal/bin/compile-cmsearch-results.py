@@ -18,5 +18,5 @@ if __name__ == '__main__':
                         help="accesory CSV with coordinates")
     options = vars(parser.parse_args())
 
-    InfernalOutputParser().parse_results(options['hits_csv'],
-                                         options['accessory_csv'])
+    InfernalOutputParser().parse_results_from_files(options['hits_csv'],
+                                                    options['accessory_csv'])

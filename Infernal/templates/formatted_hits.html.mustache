@@ -6,14 +6,17 @@
     <title>Formatted Hits</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">
-      html {
-        font-size: 12px;
-      }
-      body { 
+      .scaffold-hits {
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid silver;
+        border-radius: 3px;
+        box-shadow: 2px 2px 2px #ddd;
         color: #222;
+        font-size: 12px;
         font-family: monospace;
       }
-      h2 {
+      h2.scaffold-title {
         font-size: 14px;
         color: cornflowerBlue;
       }
@@ -28,8 +31,12 @@
         border-bottom: 1px solid #ccc;
         padding: 3px;
       }
-      .range {
+      td.range {
         width: 115px;
+      }
+      td.e_value {
+        max-width: 50px;
+        overflow: hidden;
       }
       .trunc {
         width: 10px;
@@ -43,13 +50,6 @@
       }
       .accession {
         color: #999;
-      }
-      .scaffold-hits {
-        padding: 15px;
-        margin-bottom: 4px;
-        border: 1px solid silver;
-        border-radius: 3px;
-        box-shadow: 2px 2px 2px #ddd;
       }
       tr:not(.low-evalue) > td {
         background-color: #ffcccc;
@@ -109,11 +109,11 @@
   </head>
 
   <body>
-    <p>{{unique_hits_count}} total hits</p>
+    <p>{{unique_hits_count}} unique hits</p>
 
     {{#hits_per_scaffold}}
       <div class="scaffold-hits">
-        <h2>{{target_name}}</h2>
+        <h2 class="scaffold-title">{{target_name}}</h2>
 
         <p>Total scaffold length: {{target_length}} bp</p>
 
@@ -139,7 +139,7 @@
               <th>3'</th>
               <th></th>
               <th>Model</th>
-              <th>Accession</th>
+              <!-- <th>Accession</th> -->
               <th>Length</th>
               <th>% of Target</th>
               <th colspan="2">Model % matched</th>
@@ -167,9 +167,11 @@
                   {{query_name}}
                 </td>
 
+                <!--
                 <td class="accession">
                   {{query_accession}}
                 </td>
+                -->
 
                 <td>
                   {{seq_length}}
@@ -187,11 +189,11 @@
 
                 <td>
                   {{#mdl_length}}
-                    ({{mdl_from}}-{{mdl_to}}/{{mdl_length}})
+                    {{mdl_from}}-{{mdl_to}}/{{mdl_length}}
                   {{/mdl_length}}
                 </td>
 
-                <td>
+                <td class="e_value">
                   {{e_value}}
                 </td>
 
