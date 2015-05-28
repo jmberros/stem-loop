@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import re
 
 from Bio import SeqIO
@@ -5,37 +7,47 @@ from Bio.Seq import Seq
 
 
 class ORF_Finder:
-    def find_ORFs_in_fasta(self, fasta_filename):
-        seq = SeqIO.read(fasta_filename, "fasta").seq
-        orf_list = self.find_ORFs_in_sequence(seq)
+    def find_ORFs_in_fasta(self, fasta_filename, min_nucleotides=300):
+        record = SeqIO.read(fasta_filename, "fasta")
+        orf_list = self.find_ORFs_in_sequence(record.seq, min_nucleotides)
+        for orf in orf_list:
+            orf["target_name"] = record.id
         return orf_list
 
-    def find_ORFs_in_sequence(self, seq):
+    def find_ORFs_in_sequence(self, seq, min_nucleotides):
         table = 1  # Standard Code
-        strands = [(+1, seq), (-1, seq.reverse_complement())]
+        strands = [("+", seq), ("-", seq.reverse_complement())]
 
         orf_list = []
         for strand, sequence in strands:
             for frame in range(3):
                 nucleotide_sequence = sequence[frame:]
+                rounded_seq = trim_nucleotides(nucleotide_sequence)
                 aminoacid_sequence = nucleotide_sequence.translate(table)
-                print(aminoacid_sequence)
                 orfs = re.findall("(M.*?\*)", str(aminoacid_sequence))
-                orfs = [orf for orf in orfs if self.is_a_possible_protein(orf)]
+                min_aminoacids = min_nucleotides // 3
+                orfs = [orf for orf in orfs
+                        if self.is_a_possible_protein(orf, min_aminoacids)]
 
                 for orf in orfs:
-                    i = aminoacid_sequence.find(protein) * 3
-                    j = i + len(protein) * 3 + 3  # include stop codon
+                    i = aminoacid_sequence.find(orf) * 3
+                    j = i + len(orf) * 3
                     seq = nucleotide_sequence[i:j]
-                    orf_list.append({"seq": seq, "start": i, "end": j})
-                    print("{}..{} [ length {}, strand {}, frame {}".format(
-                          seq[:30], seq[-6:], len(seq), strand, frame))
+                    if strand == "-":
+                        i = len(nucleotide_sequence) - i - trimmed_nucleotides
+                        j = len(nucleotide_sequence) - j - trimmed_nucleotides
+
+                    orf_list.append({
+                        "seq": seq, "strand": strand, "from": i, "to": j,
+                        "length": abs(j - i)
+                    })
 
         return orf_list
 
-    def is_a_possible_protein(self, aminoacid_sequence):
-        print("Is this a possible protein? --> '{}'".format(aminoacid_sequence))
-        return len(aminoacid_sequence) >= 2 and aminoacid_sequence[0] == "M"
+    def is_a_possible_protein(self, aminoacid_sequence, min_aminoacids):
+        is_long_enough = len(aminoacid_sequence) >= min_aminoacids
+        starts_with_methionine = aminoacid_sequence[0] == "M"
+        return is_long_enough and starts_with_methionine
 
     def test_sequence(self):
         # This test sequence has two ORFs in both strands and different frames
