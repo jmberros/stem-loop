@@ -1,14 +1,12 @@
-#!/usr/bin/python3.4
+#!/usr/bin/env python3.4
 
-import argparse
+import os, sys, argparse
 
-# This should be done better
-import os.path
-import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                             os.pardir))
+bin_dir = os.path.dirname(os.path.realpath(__file__))
+top_dir = os.path.dirname(bin_dir)
+sys.path.append(top_dir)
 
-from infernal import InfernalOutputParser
+from lib.infernaloutput import InfernalOutputParser
 
 
 if __name__ == '__main__':

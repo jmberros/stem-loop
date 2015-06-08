@@ -15,6 +15,8 @@ class ORF_Finder:
         orf_list = self.find_ORFs_in_sequence(record.seq, min_nucleotides)
         for orf in orf_list:
             orf["target_name"] = record.id
+
+        # FIXME: Deal with MULTIfastas!!!
         return orf_list
 
     def find_ORFs_in_sequence(self, seq, min_nucleotides):

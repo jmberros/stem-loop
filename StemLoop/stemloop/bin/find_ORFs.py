@@ -1,14 +1,14 @@
 #!/usr/bin/python3.4
 
-import argparse
-import sys
-import os
+import os, sys, argparse
 import glob
 
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                             os.pardir))
+bin_dir = os.path.dirname(os.path.realpath(__file__))
+top_dir = os.path.dirname(bin_dir)
+sys.path.append(top_dir)
 
-from stemloop import ORF_Finder
+from lib.orf import ORF_Finder
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
