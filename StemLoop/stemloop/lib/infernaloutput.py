@@ -89,6 +89,14 @@ class InfernalOutputParser:
             "inclussion", "target_description"
         ]
 
+    def cmscan_headers(self):
+        return [
+            "query_name", "query_accession", "target_name", "target_accession",
+            "mdl", "mdl_from", "mdl_to", "seq_from", "seq_to", "strand",
+            "trunc", "pass", "gc_content", "bias", "bit_score", "e_value",
+            "inclussion", "query_description"
+        ]
+
     def files(self):
         return [f for f in os.listdir(os.getcwd())]
 
