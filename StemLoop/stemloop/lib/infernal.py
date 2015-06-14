@@ -25,17 +25,20 @@ class Infernal:
 
         return output_filename
 
-    def cmscan(self, cm_database=None):
+    def cmscan(self, cm_database=None, target_fasta=None, cpu=1):
         """Search all fastas in the current dir with the given cm database"""
 
         cm_database = cm_database or self.default_db_name
         fastas = glob("*.fa") + glob("*.fna") + glob("*.fasta")
+        if target_fasta:
+            fastas = [target_fasta]
+
         for fasta in fastas:
             out_filename = "{}__in__{}".format(
-                re.sub("\.c(\.cm)?", "", cm_database),
+                re.sub("(\.cm|\.c\.cm)", "", cm_database),
                 re.sub("\.(fasta|fa|fna)", "", fasta)
             )
-            count_fastas_cmd = "grep '>' {} | wc -l".format(fasta) 
+            count_fastas_cmd = "grep '>' {} | wc -l".format(fasta)
             query_count = int(os.popen(count_fastas_cmd).read().strip())
 
             if os.path.isfile(cm_database):
@@ -45,16 +48,18 @@ class Infernal:
                 command_args = {
                     'cm_database': cm_database,
                     'query': fasta,
+                    'cpu': cpu,
                     'tbl_file': out_filename + ".tbl",
                     'out_file': out_filename + ".cmscan",
-                    'cm_db_size': db_size,  #  doesn't belong
-                    'query_count': query_count  #  doesn't belong
+                    'cm_db_size': db_size,  # doesn't belong
+                    'query_count': query_count  # doesn't belong
                 }
-                command = "cmscan --tblout {tbl_file} -o {out_file} "\
-                          "{cm_database} {query} ".format(**command_args)
-                
-                print("cmscan:"\
-                      "\n [database]  {cm_database} ({cm_db_size} models)"\
+                command = \
+                    "cmscan --tblout {tbl_file} -o {out_file} --cpu {cpu} "\
+                    "{cm_database} {query}".format(**command_args)
+ 
+                print(command)
+                print("\n [database]  {cm_database} ({cm_db_size} models)"
                       "\n [query]     {query} ({query_count} sequences)".format(**command_args))
                 print("\n... please wait ...\n")
                 subprocess.check_output(command.split())
