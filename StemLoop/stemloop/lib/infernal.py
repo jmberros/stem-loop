@@ -13,15 +13,11 @@ class Infernal:
         """Build a CM database with the CM files in the current dir"""
 
         output_filename = output_filename or self.default_db_name
-        # print("cmpress {} models into db \"{}\"".format(len(cmodel_list),
-                                                            # output_filename))
 
         with open(output_filename, "w") as f:
             subprocess.Popen(["cat"] + cmodel_list, stdout=f)
 
-        result = subprocess.check_output(["cmpress", "-F", output_filename])\
-                           .decode("utf-8")
-        # print(result)
+        subprocess.call(["cmpress", "-F", output_filename])
 
         return output_filename
 
@@ -34,10 +30,7 @@ class Infernal:
             fastas = [target_fasta]
 
         for fasta in fastas:
-            out_filename = "{}__in__{}".format(
-                re.sub("(\.cm|\.c\.cm)", "", cm_database),
-                re.sub("\.(fasta|fa|fna)", "", fasta)
-            )
+            out_filename = self.cmscan_pretty_filename(cm_database, fasta)
             count_fastas_cmd = "grep '>' {} | wc -l".format(fasta)
             query_count = int(os.popen(count_fastas_cmd).read().strip())
 
@@ -69,4 +62,10 @@ class Infernal:
                 error_msg = "[ERROR] No file named \"{}\". "\
                             "Aborting.".format(cm_database)
                 sys.exit(error_msg)
+
+    def cmscan_pretty_filename(self, cm_database, target_fasta):
+        return "{}__in__{}".format(
+            re.sub("(\.cm|\.c\.cm)", "", cm_database),
+            re.sub("\.(fasta|fa|fna)", "", target_fasta)
+        )
 

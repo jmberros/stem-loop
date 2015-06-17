@@ -1,0 +1,28 @@
+# Job name
+PBS -N "{{{ job_name }}}"
+
+# Queue name
+PBS -q "{{{ queue_name }}}"
+
+# Nodes (nodes) and cores per node (ppn)
+PBS -l nodes={{{ nodes }}}:ppn={{{ cores }}}
+
+# Export all environment variables
+PBS -V
+
+{{#output_filename}}
+
+# Output filename:
+PBS -o {{{ output_filename }}}
+{{/output_filename}}
+{{#error_filename}}
+
+# Error filename:
+PBS -e {{{ error_filename }}}
+{{/error_filename}}
+
+cd $PBS_O_WORKDIR
+
+# Commands to run ( a.k.a The Job )
+
+{{{ cmscan_path }}} {{{ minifam_path }}} --fasta {{{ fasta_path }}} --cpu {{{ cpu }}}
