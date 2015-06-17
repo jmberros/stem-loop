@@ -6,6 +6,13 @@ from glob import glob
 
 
 class Infernal:
+    @staticmethod
+    def pretty_filename_for_search(cm_database, target_fasta):
+        return "{}__in__{}".format(
+            re.sub("(\.cm|\.c\.cm)", "", cm_database),
+            re.sub("\.(fasta|fa|fna)", "", target_fasta)
+        )
+
     def __init__(self):
         self.default_db_name = "minifam.c.cm"
 
@@ -30,7 +37,7 @@ class Infernal:
             fastas = [target_fasta]
 
         for fasta in fastas:
-            out_filename = self.cmscan_pretty_filename(cm_database, fasta)
+            out_filename = self.pretty_filename_for_search(cm_database, fasta)
             count_fastas_cmd = "grep '>' {} | wc -l".format(fasta)
             query_count = int(os.popen(count_fastas_cmd).read().strip())
 
@@ -62,10 +69,3 @@ class Infernal:
                 error_msg = "[ERROR] No file named \"{}\". "\
                             "Aborting.".format(cm_database)
                 sys.exit(error_msg)
-
-    def cmscan_pretty_filename(self, cm_database, target_fasta):
-        return "{}__in__{}".format(
-            re.sub("(\.cm|\.c\.cm)", "", cm_database),
-            re.sub("\.(fasta|fa|fna)", "", target_fasta)
-        )
-
