@@ -39,8 +39,15 @@ class CmscanJobManager:
 
         return job_filename
 
-    def enqueue_job(self, job_script_path):
+    def enqueue_job(self, job_filename):
         """Enqueue the job in the given path"""
-        pass
+
+        if not os.path.isfile(job_filename):
+            sys.exit("'{}' doesn't exist".format(job_filename))
+
+        print("⌛ Enqueue the cmscan job:\n{}".format(" ".join(["qsub", job_filename])))
+        server_response = subprocess.check_output(["qsub", job_filename])
+
+        return server_response
 
 
