@@ -3,6 +3,7 @@
 
 import subprocess
 import pystache
+import sys
 import os
 
 from .infernal import Infernal
@@ -24,7 +25,7 @@ class CmscanJobManager:
         """Write a job script for the cmscan enqueue"""
 
         job_filename = Infernal.pretty_filename_for_search(database, fasta) + \
-                       ".cmscan-job"
+            ".cmscan-job"
         job_options = self.default_options.copy()
         job_options.update({
             "cores": cores,
@@ -45,9 +46,8 @@ class CmscanJobManager:
         if not os.path.isfile(job_filename):
             sys.exit("'{}' doesn't exist".format(job_filename))
 
-        print("⌛ Enqueue the cmscan job:\n{}".format(" ".join(["qsub", job_filename])))
-        server_response = subprocess.check_output(["qsub", job_filename])
+        command = "qsub {}".format(job_filename)
+        print("⌛ Enqueue the cmscan job:\n{}".format(command))
+        server_response = subprocess.check_output(command.split())
 
         return server_response
-
-
