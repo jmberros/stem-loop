@@ -23,5 +23,6 @@ if __name__ == "__main__":
     job_script = cmscan_manager.write_job_script(
         options["cm_database"], options["fasta"], options["cpu"]
     )
-    server_response = cmscan_manager.enqueue_job(job_script)
+    server_response = cmscan_manager.enqueue_job(job_script).decode("utf-8")\
+                                                            .strip()
     print(server_response)
