@@ -1,4 +1,4 @@
-#!/home/cquiroga/juan/opt/bin/python4.4
+#!/home/cquiroga/juan/opt/bin/python3.4
 # -*- coding: utf-8 -*-
 
 import sys, os, argparse
