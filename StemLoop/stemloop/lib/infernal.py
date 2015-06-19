@@ -52,11 +52,13 @@ class Infernal:
                     'tbl_file': out_filename + ".cmscan-tbl",
                     'out_file': out_filename + ".cmscan-output",
                     'cm_db_size': db_size,  # doesn't belong
-                    'query_count': query_count  # doesn't belong
+                    'query_count': query_count,  # doesn't belong
+                    'cmscan_path': subprocess.check_output(["which", "cmscan"])\
+                                             .decode("utf-8").strip()
                 }
                 command = \
-                    "cmscan --tblout {tbl_file} -o {out_file} --cpu {cpu} "\
-                    "{cm_database} {query}".format(**command_args)
+                    "{program_path} --tblout {tbl_file} -o {out_file}"\
+                    " --cpu {cpu} {cm_database} {query}".format(**command_args)
  
                 print(command)
                 print("\n [database]  {cm_database} ({cm_db_size} models)"
