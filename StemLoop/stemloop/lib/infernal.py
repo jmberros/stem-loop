@@ -49,8 +49,8 @@ class Infernal:
                     'cm_database': cm_database,
                     'query': fasta,
                     'cpu': cpu,
-                    'tbl_file': out_filename + ".tbl",
-                    'out_file': out_filename + ".cmscan",
+                    'tbl_file': out_filename + ".cmscan-tbl",
+                    'out_file': out_filename + ".cmscan-output",
                     'cm_db_size': db_size,  # doesn't belong
                     'query_count': query_count  # doesn't belong
                 }
